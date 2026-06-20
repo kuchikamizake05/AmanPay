@@ -41,8 +41,7 @@ impl Fixture {
         let second_token = second_asset.address();
 
         token::StellarAssetClient::new(&env, &token).mint(&buyer, &INITIAL_BALANCE);
-        token::StellarAssetClient::new(&env, &second_token)
-            .mint(&buyer, &INITIAL_BALANCE);
+        token::StellarAssetClient::new(&env, &second_token).mint(&buyer, &INITIAL_BALANCE);
 
         let client = AmanPayEscrowClient::new(&env, &contract_id);
         client.set_asset_enabled(&token, &true);
@@ -94,8 +93,7 @@ impl Fixture {
     }
 
     fn deliver(&self, deal_id: u64) {
-        self.client()
-            .submit_delivery(&deal_id, &self.hash(2));
+        self.client().submit_delivery(&deal_id, &self.hash(2));
     }
 
     fn token_client(&self, asset: &Address) -> token::Client<'_> {
@@ -271,6 +269,86 @@ fn admin_controls_asset_allowlist() {
     assert!(client.is_asset_enabled(&asset));
     client.set_asset_enabled(&asset, &false);
     assert!(!client.is_asset_enabled(&asset));
+}
+
+#[test]
+fn privileged_actions_require_real_role_authorization() {
+    let f = Fixture::new();
+    let client = f.client();
+    let asset = Address::generate(&f.env);
+
+    f.env.set_auths(&[]);
+    assert!(client.try_set_asset_enabled(&asset, &true).is_err());
+
+    assert!(client
+        .try_create_deal(
+            &DealType::Service,
+            &f.seller,
+            &f.buyer,
+            &f.resolver,
+            &f.token,
+            &DEAL_AMOUNT,
+            &f.hash(1),
+            &(START_TIME + 100),
+            &10u64,
+            &0u32,
+            &0u64,
+        )
+        .is_err());
+
+    f.env.mock_all_auths();
+    let id = f.create_deal();
+    f.env.set_auths(&[]);
+    assert!(client.try_fund_deal(&id).is_err());
+
+    f.env.mock_all_auths();
+    f.fund(id);
+    f.env.set_auths(&[]);
+    assert!(client.try_submit_delivery(&id, &f.hash(2)).is_err());
+
+    f.env.mock_all_auths();
+    f.deliver(id);
+    f.env.set_auths(&[]);
+    assert!(client.try_approve_release(&id).is_err());
+
+    f.env.mock_all_auths();
+    client.open_dispute(&id, &f.buyer, &f.hash(3));
+    f.env.set_auths(&[]);
+    assert!(client
+        .try_resolve_dispute(&id, &Resolution::RefundBuyer)
+        .is_err());
+
+    // The expected admin identity remains part of the fixture and cannot be substituted.
+    assert_ne!(f.admin, f.outsider);
+}
+
+#[test]
+fn disabling_asset_only_blocks_new_deals() {
+    let f = Fixture::new();
+    let id = f.create_deal();
+    f.client().set_asset_enabled(&f.token, &false);
+
+    assert_eq!(
+        f.client().try_create_deal(
+            &DealType::Custom,
+            &f.seller,
+            &f.buyer,
+            &f.resolver,
+            &f.token,
+            &DEAL_AMOUNT,
+            &f.hash(8),
+            &(START_TIME + 100),
+            &10u64,
+            &0u32,
+            &0u64,
+        ),
+        Err(Ok(ContractError::AssetNotEnabled))
+    );
+
+    f.fund(id);
+    f.deliver(id);
+    f.client().approve_release(&id);
+    assert_eq!(f.client().get_deal(&id).status, DealStatus::Released);
 }
 
 #[test]
@@ -479,6 +557,6 @@ fn lifecycle_emits_events() {
     f.deliver(id);
     f.client().approve_release(&id);
 
-    // Two allowlist events plus create, fund, delivery, and release.
-    assert_eq!(f.env.events().all().events().len(), 6);
+    // The latest top-level invocation contains the token transfer and AmanPay release event.
+    assert_eq!(f.env.events().all().events().len(), 2);
 }
