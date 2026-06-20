@@ -1,231 +1,22 @@
 #![no_std]
 
-use soroban_sdk::{
-    contract, contracterror, contractevent, contractimpl, contracttype, token, Address, BytesN,
-    Env, MuxedAddress,
-};
+mod error;
+mod events;
+mod storage;
+mod types;
 
-const INSTANCE_TTL_THRESHOLD: u32 = 17_280;
-const INSTANCE_TTL_EXTEND_TO: u32 = 518_400;
-const DEAL_TTL_THRESHOLD: u32 = 17_280;
-const DEAL_TTL_EXTEND_TO: u32 = 518_400;
+pub use error::ContractError;
+pub use types::{Deal, DealStatus, DealType, Resolution};
 
-#[contracttype]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum DealType {
-    Service,
-    DigitalGoods,
-    Custom,
-}
-
-#[contracttype]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum DealStatus {
-    Created,
-    Funded,
-    Delivered,
-    RevisionRequested,
-    Disputed,
-    Released,
-    Refunded,
-    Cancelled,
-}
-
-#[contracttype]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum Resolution {
-    RefundBuyer,
-    ReleaseSeller,
-}
-
-#[contracttype]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Deal {
-    pub id: u64,
-    pub deal_type: DealType,
-    pub seller: Address,
-    pub buyer: Address,
-    pub resolver: Address,
-    pub asset: Address,
-    pub amount: i128,
-    pub terms_hash: BytesN<32>,
-    pub delivery_hash: Option<BytesN<32>>,
-    pub dispute_hash: Option<BytesN<32>>,
-    pub delivery_deadline: u64,
-    pub review_period: u64,
-    pub review_deadline: Option<u64>,
-    pub revision_limit: u32,
-    pub revision_period: u64,
-    pub revision_count: u32,
-    pub status: DealStatus,
-    pub created_at: u64,
-    pub funded_at: Option<u64>,
-    pub delivered_at: Option<u64>,
-    pub closed_at: Option<u64>,
-}
-
-#[contracttype]
-#[derive(Clone)]
-enum DataKey {
-    Admin,
-    NextDealId,
-    AssetEnabled(Address),
-    Deal(u64),
-}
-
-#[contracterror]
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-#[repr(u32)]
-pub enum ContractError {
-    AssetNotEnabled = 1,
-    InvalidAmount = 2,
-    InvalidDeadline = 3,
-    InvalidPeriod = 4,
-    InvalidParties = 5,
-    InvalidResolver = 6,
-    DealNotFound = 7,
-    InvalidState = 8,
-    DeadlineNotReached = 9,
-    ReviewPeriodNotElapsed = 10,
-    RevisionLimitReached = 11,
-    InvalidParty = 12,
-    ArithmeticOverflow = 13,
-    DeadlinePassed = 14,
-    ReviewPeriodElapsed = 15,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct AssetUpdated {
-    #[topic]
-    pub asset: Address,
-    pub enabled: bool,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DealCreated {
-    #[topic]
-    pub deal_id: u64,
-    pub seller: Address,
-    pub buyer: Address,
-    pub asset: Address,
-    pub amount: i128,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DealFunded {
-    #[topic]
-    pub deal_id: u64,
-    pub amount: i128,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DeliverySubmitted {
-    #[topic]
-    pub deal_id: u64,
-    pub delivery_hash: BytesN<32>,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct RevisionRequested {
-    #[topic]
-    pub deal_id: u64,
-    pub revision_count: u32,
-    pub reason_hash: BytesN<32>,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DisputeOpened {
-    #[topic]
-    pub deal_id: u64,
-    pub opener: Address,
-    pub reason_hash: BytesN<32>,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DealReleased {
-    #[topic]
-    pub deal_id: u64,
-    pub amount: i128,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DealRefunded {
-    #[topic]
-    pub deal_id: u64,
-    pub amount: i128,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DisputeResolved {
-    #[topic]
-    pub deal_id: u64,
-    pub resolution: Resolution,
-}
-
-#[contractevent]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DealCancelled {
-    #[topic]
-    pub deal_id: u64,
-    pub seller: Address,
-}
+use events::*;
+use soroban_sdk::{contract, contractimpl, token, Address, BytesN, Env, MuxedAddress};
+use storage::{extend_instance_ttl, next_deal_id, read_deal, write_deal, DataKey};
 
 #[contract]
 pub struct AmanPayEscrow;
 
-fn extend_instance_ttl(env: &Env) {
-    env.storage()
-        .instance()
-        .extend_ttl(INSTANCE_TTL_THRESHOLD, INSTANCE_TTL_EXTEND_TO);
-}
-
-fn deal_key(id: u64) -> DataKey {
-    DataKey::Deal(id)
-}
-
-fn read_deal(env: &Env, id: u64) -> Result<Deal, ContractError> {
-    let key = deal_key(id);
-    let deal = env
-        .storage()
-        .persistent()
-        .get(&key)
-        .ok_or(ContractError::DealNotFound)?;
-    env.storage()
-        .persistent()
-        .extend_ttl(&key, DEAL_TTL_THRESHOLD, DEAL_TTL_EXTEND_TO);
-    Ok(deal)
-}
-
-fn write_deal(env: &Env, deal: &Deal) {
-    let key = deal_key(deal.id);
-    env.storage().persistent().set(&key, deal);
-    env.storage()
-        .persistent()
-        .extend_ttl(&key, DEAL_TTL_THRESHOLD, DEAL_TTL_EXTEND_TO);
-}
-
-fn next_deal_id(env: &Env) -> Result<u64, ContractError> {
-    let id: u64 = env
-        .storage()
-        .instance()
-        .get(&DataKey::NextDealId)
-        .unwrap_or(1);
-    let next = id.checked_add(1).ok_or(ContractError::ArithmeticOverflow)?;
-    env.storage().instance().set(&DataKey::NextDealId, &next);
-    Ok(id)
-}
-
 fn token_transfer(env: &Env, asset: &Address, from: &Address, to: &Address, amount: i128) {
-    token::Client::new(env, asset).transfer(from, &MuxedAddress::from(to), &amount);
+    token::Client::new(env, asset).transfer(from, MuxedAddress::from(to), &amount);
 }
 
 fn release_to_seller(env: &Env, deal: &mut Deal) {
@@ -577,4 +368,5 @@ impl AmanPayEscrow {
     }
 }
 
+#[cfg(test)]
 mod test;

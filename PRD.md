@@ -385,23 +385,25 @@ Partial split dan pergantian resolver berada di luar scope MVP.
 Deal {
   id: u64,
   deal_type: DealType,
-  creator: Address,
-  buyer: Address,
   seller: Address,
-  amount: i128,
+  buyer: Address,
+  resolver: Address,
   asset: Address,
+  amount: i128,
   terms_hash: BytesN<32>,
   delivery_hash: Option<BytesN<32>>,
-  deadline: u64,
+  dispute_hash: Option<BytesN<32>>,
+  delivery_deadline: u64,
   review_period: u64,
   review_deadline: Option<u64>,
-  resolver: Address,
-  status: DealStatus,
+  revision_limit: u32,
+  revision_period: u64,
   revision_count: u32,
+  status: DealStatus,
   created_at: u64,
   funded_at: Option<u64>,
   delivered_at: Option<u64>,
-  released_at: Option<u64>,
+  closed_at: Option<u64>,
 }
 ```
 
@@ -417,12 +419,14 @@ fund_deal(deal_id)
 submit_delivery(deal_id, delivery_hash)
 request_revision(deal_id, reason_hash)
 approve_release(deal_id)
-open_dispute(deal_id, reason_hash)
+open_dispute(deal_id, opener, reason_hash)
 refund_expired_undelivered(deal_id)
 release_after_review_timeout(deal_id)
 resolve_dispute(deal_id, resolution)
 cancel_unfunded_deal(deal_id)
 get_deal(deal_id)
+set_asset_enabled(asset, enabled)
+is_asset_enabled(asset)
 ```
 
 ### Access Rules
@@ -445,6 +449,7 @@ get_deal(deal_id)
 * Semua transfer menggunakan Stellar Asset Contract client dan checked arithmetic.
 * Seluruh fungsi sensitif memverifikasi role dengan `require_auth()`.
 * Tidak ada perubahan buyer, seller, asset, amount, atau terms setelah funding.
+* Hanya Stellar Asset Contract yang sudah masuk admin allowlist dapat dipakai untuk deal baru; menonaktifkan aset tidak menghambat settlement deal lama.
 
 ---
 

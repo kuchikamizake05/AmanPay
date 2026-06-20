@@ -1,118 +1,100 @@
-# Stellar Notes DApp
+# AmanPay
 
-**Stellar Notes DApp** - Blockchain-Based Decentralized Note-Taking System
+**AmanPay turns messy chat deals into mutually approved, escrow-backed transactions.**
 
-## Project Description
+AmanPay adalah Deal OS dan programmable rekber untuk transaksi digital informal. Contract Soroban mengunci aset, menegakkan lifecycle deal, melindungi kedua pihak dengan deadline/review timeout, dan menyediakan resolver untuk dispute tanpa memberi admin akses untuk mengambil dana escrow.
 
-Stellar Notes DApp is a decentralized smart contract solution built on the Stellar blockchain using Soroban SDK. It provides a secure, immutable platform for managing personal notes directly on the blockchain. The contract ensures that your data is stored transparently and is only manageable through predefined smart contract functions, eliminating reliance on centralized database providers.
+## Phase 1 Status
 
-The system allows users to create, view, and delete notes, leveraging the efficiency and security of the Stellar network. Each note is uniquely identified and stored within the contract's instance storage, ensuring data persistence and reliability.
+Contract core telah tersedia dengan:
 
-## Project Vision
+- Generic deal types: `Service`, `DigitalGoods`, dan `Custom`
+- Asset allowlist untuk Stellar Asset Contracts
+- Create, fund, delivery, revision, approval, cancellation, dan dispute resolution
+- Deterministic refund dan release timeout
+- Persistent deal storage dengan TTL refresh
+- Typed contract errors dan typed lifecycle events
+- 18 unit tests dan 98.06% line coverage
+- Testnet smoke flow nyata untuk native XLM dan mock USDC
 
-Our vision is to revolutionize personal productivity in the digital age by:
+Frontend, metadata backend, AI parser, account profile, dan reputation belum termasuk phase ini. Lihat [PRD.md](PRD.md) untuk product scope lengkap.
 
-- **Decentralizing Data**: Moving note-taking from centralized servers to a global, distributed blockchain
-- **Ensuring Ownership**: Empowering users to have complete control and ownership over their digital thoughts and information
-- **Guaranteeing Immutability**: Providing a permanent, tamper-proof record of notes that cannot be altered or deleted by third parties
-- **Enhancing Privacy**: Leveraging blockchain security to protect personal information from unauthorized access
-- **Building Trustless Systems**: Creating a platform where data integrity is guaranteed by code, not by company promises
+## Project Structure
 
-We envision a future where digital information is truly personal and sovereign, empowering individuals with complete autonomy over their digital assets.
+```text
+contract/amanpay-escrow/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs       # Public contract interface and state transitions
+│   ├── types.rs     # Deal, status, type, and resolution
+│   ├── error.rs     # Typed contract errors
+│   ├── events.rs    # Typed contract events
+│   ├── storage.rs   # Storage keys and TTL helpers
+│   └── test.rs      # Unit and security tests
+└── test_snapshots/
 
-## Key Features
+scripts/testnet-smoke.sh
+```
 
-### 1. **Simple Note Creation**
+## Requirements
 
-- Create notes with just one function call
-- Specify title and content for each note
-- Automated ID generation for unique identification
-- Persistent storage on the Stellar blockchain
+- Rust 1.84 or newer
+- `wasm32v1-none` Rust target
+- Stellar CLI 27
+- Ubuntu WSL recommended on this machine because Windows Application Control blocks Cargo build scripts
 
-### 2. **Efficient Data Retrieval**
+## Build and Test
 
-- Fetch all stored notes in a single call
-- Structured data representation for easy frontend integration
-- Quick access to your entire note collection
-- Real-time synchronization with the blockchain state
+Run from WSL:
 
-### 3. **Secure Deletion**
+```bash
+cd /mnt/c/Users/ASUS/Documents/coding/web3/stelluy
+cargo fmt --all -- --check
+cargo test -p amanpay-escrow
+stellar contract build
+```
 
-- Remove specific notes using their unique IDs
-- Permanent removal from the contract storage
-- Clean and efficient storage management
-- Immediate update of the note list after deletion
+Build output:
 
-### 4. **Transparency and Security**
+```text
+target/wasm32v1-none/release/amanpay_escrow.wasm
+```
 
-- View all note activities on the blockchain
-- Blockchain-based verification of all storage actions
-- Immutable records of note creation and deletion
-- Protected against unauthorized modifications
+Coverage:
 
-### 5. **Stellar Network Integration**
+```bash
+rustup component add llvm-tools-preview
+cargo install cargo-llvm-cov --locked
+cargo llvm-cov -p amanpay-escrow --summary-only --fail-under-lines 80
+```
 
-- Leverages the high speed and low cost of Stellar
-- Built using the modern Soroban Smart Contract SDK
-- Scalable architecture for growing note collections
-- Interoperable with other Stellar-based services
+## Testnet Smoke Test
 
-## Contract Details
+The script stores keys only in Stellar CLI's WSL configuration and never writes secrets to this repository.
 
-- Contract Address: CBLU4IUASQ4WUMOXBFLZRSBBLILGOH33GS4LUPKFBCCCMJCDQNMF7G2M
-  (Screenshot has been removed)
+```bash
+./scripts/testnet-smoke.sh
+```
 
-## Future Scope
+It creates/funds test identities, prepares native XLM and mock USDC SACs, deploys AmanPay, and verifies two complete `create → fund → deliver → release` flows including final balances.
 
-### Short-Term Enhancements
+Latest verified testnet deployment:
 
-1. **Note Encryption**: Support for end-to-end encryption of note content for enhanced privacy
-2. **Category Management**: Add tags and categories to organize notes efficiently
-3. **Rich Text Support**: Extend support beyond plain text to include Markdown and formatted content
-4. **Search Functionality**: Implement advanced search filters for large note collections
+- AmanPay: [`CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52`](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52)
+- Native XLM SAC: `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC`
+- Mock USDC SAC: `CD72G634XB5BMTMGJ43ER7Q5QLEYX7XGS6JT7BOMDJTOGTBL3EP4JD66`
+- XLM release transaction: [`52916b23…692b7d9`](https://stellar.expert/explorer/testnet/tx/52916b239f8a1da19efb5c16424335e454e86ae79b3816f7cce70f656692b7d9)
+- USDC release transaction: [`7f128dbb…c8cabe2a`](https://stellar.expert/explorer/testnet/tx/7f128dbb32252cf96e75912532a050de6fa7ba4fe57611b618f1b812c8cabe2a)
 
-### Medium-Term Development
+Testnet can reset; rerun the smoke script to create a fresh deployment when required.
 
-5. **Collaborative Notes**: Implement multi-signature requirements for shared or collaborative note-taking
-   - Shared access for multiple addresses
-   - Permission-based editing and viewing
-   - Version history tracking
-6. **Notification System**: Off-chain bridge to alert users of new updates or shared notes
-7. **Asset Attachment**: Capability to attach digital assets or tokens to specific notes
-8. **Inter-Contract Integration**: Allow other smart contracts to interact with and store data in the notes contract
+## Security Model
 
-### Long-Term Vision
+- Seller authorizes deal creation; buyer authorizes funding and release.
+- Resolver must differ from buyer and seller and can act only after dispute.
+- Admin can enable/disable assets for new deals but cannot transfer escrow funds.
+- Final states cannot be reopened or paid twice.
+- Token movement uses the Stellar Asset Contract interface.
+- Timeout actions are permissionless but have deterministic recipients.
 
-9. **Cross-Chain Synchronization**: Extend note storage to multiple blockchain networks
-10. **Decentralized UI Hosting**: Host the frontend on IPFS or similar decentralized platforms
-11. **AI-Powered Summarization**: Optional integration with AI to help users summarize their notes
-12. **Privacy Layers**: Implement zero-knowledge proofs for completely private note content
-13. **DAO Governance**: Community-driven protocol improvements and feature prioritization
-14. **Identity Management**: Integration with decentralized identity (DID) systems for user management
-
-### Enterprise Features
-
-15. **Corporate Documentation**: Adapt the system for secure corporate record-keeping
-16. **Immutable Logging**: Create time-locked logs for audit purposes
-17. **Automated Reporting**: Automatic note triggers for periodic reporting
-18. **Multi-Language Support**: Expand accessibility with internationalization
-
----
-
-## Technical Requirements
-
-- Soroban SDK
-- Rust programming language
-- Stellar blockchain network
-
-## Getting Started
-
-Deploy the smart contract to Stellar's Soroban network and interact with it using the three main functions:
-
-- `create_note()` - Create a new note with a title and content
-- `get_notes()` - Retrieve all stored notes from the contract
-- `delete_note()` - Remove a specific note by its ID
-
----
-
-**Stellar Notes DApp** - Securing Your Thoughts on the Blockchain
+This is hackathon software deployed on testnet and has not received a production security audit.
