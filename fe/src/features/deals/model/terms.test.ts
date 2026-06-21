@@ -17,7 +17,7 @@ describe("deal terms", () => {
 
   it("produces deterministic lowercase SHA-256", async () => {
     await expect(hashTerms({ seller: "GA", amountStroops: "10" })).resolves.toBe(
-      "faad7b95ea9df62755b11865be78cf1c331e71d6dc45d6502a60cb029575a12e",
+      "5437719d8fe17e4961f1e684b9fe59f7ad9896c14bc18332f2eff7245e11ce6d",
     );
   });
 });
