@@ -1,38 +1,64 @@
-# AmanPay
+# AmanPay - Deal OS & Programmable Rekber (Escrow)
 
 **AmanPay turns messy chat deals into mutually approved, escrow-backed transactions.**
 
-AmanPay adalah Deal OS dan programmable rekber untuk transaksi digital informal. Contract Soroban mengunci aset, menegakkan lifecycle deal, melindungi kedua pihak dengan deadline/review timeout, dan menyediakan resolver untuk dispute tanpa memberi admin akses untuk mengambil dana escrow.
+AmanPay adalah Deal OS dan *programmable rekber* untuk transaksi digital informal (freelance, jual-beli template/akun/file digital) lintas platform. AmanPay membantu buyer dan seller menyusun kesepakatan yang berantakan dari chat (WhatsApp, Telegram, X, Discord) menjadi transaksi terstruktur yang dijamin oleh Soroban smart contract di Stellar Testnet.
 
-## Phase 1 Status
+---
 
-Contract core telah tersedia dengan:
+## 🌟 Fitur Utama
 
-- Generic deal types: `Service`, `DigitalGoods`, dan `Custom`
-- Asset allowlist untuk Stellar Asset Contracts
-- Create, fund, delivery, revision, approval, cancellation, dan dispute resolution
-- Deterministic refund dan release timeout
-- Persistent deal storage dengan TTL refresh
-- Typed contract errors dan typed lifecycle events
-- 18 unit tests dan 98.06% line coverage
-- Testnet smoke flow nyata untuk native XLM dan mock USDC
+1. **Hybrid AI Deal Parser**:
+   - Pengguna cukup menyalin obrolan kesepakatan informal, lalu parser mengekstrak parameter penting secara otomatis (tipe deal, judul, harga/nominal, tenggat waktu, deliverables, dan batas revisi).
+   - Menggunakan model **Gemini 1.5 Flash** dengan schema terstruktur (`responseSchema`), dengan fallback otomatis ke parser regex lokal jika kunci API tidak terpasang.
+2. **Soroban Smart Contract Escrow**:
+   - Escrow non-custodial yang mengunci dana di blockchain. Pembayaran dilepaskan/dikembalikan hanya berdasarkan transisi state, persetujuan eksplisit, atau aturan batas waktu (*timeout*).
+3. **Wallet Simulator (Zero-Extension Demo)**:
+   - Memungkinkan pengujian transaksi Soroban nyata di testnet secara langsung tanpa harus memasang Freighter extension. Kunci generator, auto-funding lewat Friendbot, dan local signing diatur di latar belakang.
+4. **Verified Profile & Public Receipts**:
+   - Setiap transaksi yang berhasil diselesaikan menerbitkan resi publik terverifikasi yang dapat dibagikan ke media sosial (WhatsApp/Telegram-ready share).
+   - Halaman profil publik menampilkan rekam jejak tepercaya berdasarkan statistik jumlah transaksi sukses, sengketa (disputes), dan volume transaksi yang berhasil.
 
-AI parser, account profile, dan reputation belum termasuk phase kontrak ini. Lihat [PRD.md](PRD.md) untuk product scope lengkap.
+---
 
-## Phase 2 Status
+## 🛠️ Project Structure
 
-Frontend dasar tersedia di `fe/` dengan:
+```text
+├── contract/amanpay-escrow/   # Soroban Rust smart contract
+│   ├── src/
+│   │   ├── lib.rs            # Core contract entrypoints & state transitions
+│   │   ├── types.rs          # Escrow structures, statuses & enums
+│   │   └── test.rs           # 18 unit tests & security invariants
+├── fe/                       # Next.js App Router frontend
+│   ├── src/
+│   │   ├── app/              # Page layouts & API endpoints
+│   │   ├── components/       # Layout headers & global wrappers
+│   │   ├── features/         # Feature-driven modules (deals, wallet, dashboard)
+│   │   └── lib/              # Stellar helper clients & Supabase connection
+│   └── vitest.setup.ts       # Vitest setup configuration
+└── supabase/migrations/      # Database off-chain migrations for metadata & events
+```
 
-- Landing page, create deal, public deal detail, dan wallet dashboard
-- Stellar Wallets Kit untuk Freighter, xBull, LOBSTR, dan Albedo di testnet
-- Integrasi nyata `create_deal` dan `get_deal`
-- Canonical JSON + SHA-256 `terms_hash`
-- Supabase metadata registration yang diverifikasi terhadap state on-chain
-- XLM dan mock USDC selector
-- Unit/component tests dengan coverage di atas 80%
+---
 
-Jalankan frontend:
+## 🚀 Persiapan & Instalasi Lokal
 
+### 1. Smart Contract (Rust & WASM)
+Pastikan Anda memiliki Rust, wasm target, dan Stellar CLI versi terbaru.
+
+Jalankan perintah berikut untuk memformat kode, menjalankan test kontrak pintar, dan melakukan kompilasi file WASM:
+```bash
+cd contract/amanpay-escrow
+cargo test -p amanpay-escrow
+stellar contract build
+```
+File hasil build akan berada di `target/wasm32v1-none/release/amanpay_escrow.wasm`.
+
+### 2. Database Migrations (Supabase)
+Terapkan migration SQL yang ada di folder `supabase/migrations/` pada project database Supabase Anda untuk menginisialisasi tabel-tabel metadata, timeline events, deliveries, dan private notes.
+
+### 3. Frontend Next.js
+Pindah ke folder `fe`, salin contoh file environment, instal dependensi, dan jalankan server pengembangan:
 ```bash
 cd fe
 cp .env.example .env.local
@@ -40,84 +66,69 @@ npm install
 npm run dev
 ```
 
-Isi `STELLAR_READ_SOURCE`, `NEXT_PUBLIC_DEFAULT_RESOLVER`, dan credential Supabase di `.env.local`. Terapkan migration pada `supabase/migrations/` sebelum menguji metadata dan dashboard.
+#### Pengisian Environment `.env.local`
+Isi variabel-variabel berikut di file `.env.local` Anda:
+```env
+# Stellar Deployment Configuration
+NEXT_PUBLIC_AMANPAY_CONTRACT_ID=CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52
+NEXT_PUBLIC_DEFAULT_RESOLVER=GBUYER...   # Alamat wallet resolver (pihak ketiga pemutus dispute)
+STELLAR_READ_SOURCE=GSELLER...          # Akun Stellar CLI testnet untuk kueri internal
 
-## Project Structure
+# Supabase Configurations
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-```text
-contract/amanpay-escrow/
-├── Cargo.toml
-├── src/
-│   ├── lib.rs       # Public contract interface and state transitions
-│   ├── types.rs     # Deal, status, type, and resolution
-│   ├── error.rs     # Typed contract errors
-│   ├── events.rs    # Typed contract events
-│   ├── storage.rs   # Storage keys and TTL helpers
-│   └── test.rs      # Unit and security tests
-└── test_snapshots/
-
-scripts/testnet-smoke.sh
+# Optional AI API Key (Gemini)
+GEMINI_API_KEY=your-gemini-api-key
 ```
 
-## Requirements
+---
 
-- Rust 1.84 or newer
-- `wasm32v1-none` Rust target
-- Stellar CLI 27
-- Ubuntu WSL recommended on this machine because Windows Application Control blocks Cargo build scripts
+## 🧪 Pengujian Unit & Integrasi (Vitest)
 
-## Build and Test
+Frontend AmanPay memiliki cakupan pengujian unit yang sangat luas (29 unit tests lulus 100% green) mencakup parser teks, autentikasi session cookie, stable hash metadata kanonikal, decoder soroban, dan resi share message formatters.
 
-Run from WSL:
-
+Jalankan pengujian unit dari folder `fe`:
 ```bash
-cd /mnt/c/Users/ASUS/Documents/coding/web3/stelluy
-cargo fmt --all -- --check
-cargo test -p amanpay-escrow
-stellar contract build
+npm run test
 ```
 
-Build output:
+---
 
-```text
-target/wasm32v1-none/release/amanpay_escrow.wasm
-```
+## ⚡ Deployment Testnet Terverifikasi
 
-Coverage:
+Aplikasi ini berinteraksi langsung dengan Soroban Escrow Contract yang telah dideploy di Stellar Testnet:
 
-```bash
-rustup component add llvm-tools-preview
-cargo install cargo-llvm-cov --locked
-cargo llvm-cov -p amanpay-escrow --summary-only --fail-under-lines 80
-```
+- **AmanPay Escrow Contract**: [`CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52`](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52)
+- **Native XLM SAC Address**: `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC`
+- **Mock USDC SAC Address**: `CD72G634XB5BMTMGJ43ER7Q5QLEYX7XGS6JT7BOMDJTOGTBL3EP4JD66`
 
-## Testnet Smoke Test
+---
 
-The script stores keys only in Stellar CLI's WSL configuration and never writes secrets to this repository.
+## 📖 Skenario Uji Coba (Demo Walkthrough)
 
-```bash
-./scripts/testnet-smoke.sh
-```
+Anda dapat dengan mudah mendemokan siklus transaksi rekber AmanPay menggunakan **Wallet Simulator**:
 
-It creates/funds test identities, prepares native XLM and mock USDC SACs, deploys AmanPay, and verifies two complete `create → fund → deliver → release` flows including final balances.
-
-Latest verified testnet deployment:
-
-- AmanPay: [`CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52`](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52)
-- Native XLM SAC: `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC`
-- Mock USDC SAC: `CD72G634XB5BMTMGJ43ER7Q5QLEYX7XGS6JT7BOMDJTOGTBL3EP4JD66`
-- XLM release transaction: [`52916b23…692b7d9`](https://stellar.expert/explorer/testnet/tx/52916b239f8a1da19efb5c16424335e454e86ae79b3816f7cce70f656692b7d9)
-- USDC release transaction: [`7f128dbb…c8cabe2a`](https://stellar.expert/explorer/testnet/tx/7f128dbb32252cf96e75912532a050de6fa7ba4fe57611b618f1b812c8cabe2a)
-
-Testnet can reset; rerun the smoke script to create a fresh deployment when required.
-
-## Security Model
-
-- Seller authorizes deal creation; buyer authorizes funding and release.
-- Resolver must differ from buyer and seller and can act only after dispute.
-- Admin can enable/disable assets for new deals but cannot transfer escrow funds.
-- Final states cannot be reopened or paid twice.
-- Token movement uses the Stellar Asset Contract interface.
-- Timeout actions are permissionless but have deterministic recipients.
-
-This is hackathon software deployed on testnet and has not received a production security audit.
+1. **Aktivasi Seller**:
+   - Buka aplikasi lokal Anda (`http://localhost:3000`).
+   - Di pojok kanan bawah, klik tombol **"Simulasikan Seller"** pada panel Simulator. Klien akan secara otomatis mendaftarkan wallet seller baru dan menyuntikkan saldo XLM via Friendbot.
+2. **Autofill Kesepakatan**:
+   - Masuk ke halaman **Buat Deal** (`/deals/new`).
+   - Klik salah satu template cepat (contoh: ** Jasa Web Design**) untuk menempel teks kesepakatan informal.
+   - Klik **"Analisis Kesepakatan"**, periksa pratinjau data terstruktur, lalu klik **"Terapkan ke Form"**.
+   - Isi alamat wallet buyer simulator Anda (misal klik "Simulasikan Buyer" sebentar untuk menyalin alamatnya, lalu kembali ke Seller).
+   - Klik **"Review & buat deal"**, lalu tandatangani transaksi. Anda akan dialihkan ke halaman detail deal yang baru dibuat dengan status "Created".
+3. **Funding oleh Buyer**:
+   - Klik **"Simulasikan Buyer"** di panel Simulator untuk beralih peran secara instan.
+   - Buka halaman link detail deal tadi, klik **"Accept & Fund Escrow"**. Status deal akan berubah menjadi "Funded" dan saldo XLM buyer akan terkunci aman di dalam escrow.
+4. **Pengiriman oleh Seller**:
+   - Alihkan kembali peran simulator ke **Seller**.
+   - Di panel aksi, klik **"Submit Delivery"**, masukkan link google drive/github beserta catatan pengiriman, lalu submit. Status deal berubah menjadi "Delivered".
+5. **Pelepasan Dana (Release)**:
+   - Alihkan peran simulator kembali ke **Buyer**.
+   - Periksa lampiran pengiriman seller, lalu klik **"Approve & Release"**.
+   - Transaksi diproses di blockchain testnet, memindahkan saldo dari contract escrow ke dompet seller secara langsung. Status deal berubah menjadi "Released" (selesai).
+6. **Resi & Profil**:
+   - Klik tombol **"Buka Resi Publik"** yang muncul di halaman detail. Anda akan melihat serrated card receipt yang memuat hash bukti blockchain, terms, dan tombol bagikan cepat ke WhatsApp/Telegram.
+   - Klik tautan alamat wallet di detail pihak deal untuk memeriksa riwayat reputasi transaksi sukses di halaman **Profil**.

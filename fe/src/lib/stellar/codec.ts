@@ -8,11 +8,11 @@ import type {
 import type { CanonicalDealTerms } from "@/features/deals/model/metadata";
 import { parseAmountToStroops } from "@/features/deals/model/terms";
 
-function enumScVal(value: string) {
+export function enumScVal(value: string) {
   return xdr.ScVal.scvVec([nativeToScVal(value, { type: "symbol" })]);
 }
 
-function bytes32ScVal(hex: string) {
+export function bytes32ScVal(hex: string) {
   if (!/^[0-9a-f]{64}$/i.test(hex)) throw new Error("Terms hash tidak valid");
   return xdr.ScVal.scvBytes(Buffer.from(hex, "hex"));
 }
@@ -64,7 +64,10 @@ export type ChainDeal = {
   asset: string;
   amountStroops: string;
   termsHash: string;
+  deliveryHash: string | null;
+  disputeHash: string | null;
   deliveryDeadline: number;
+  reviewDeadline: number | null;
   reviewPeriodSeconds: number;
   revisionLimit: number;
   revisionCount: number;
@@ -82,7 +85,12 @@ export function normalizeChainDeal(value: Record<string, unknown>): ChainDeal {
     asset: String(value.asset),
     amountStroops: String(value.amount),
     termsHash: hexBytes(value.terms_hash) ?? "",
+    deliveryHash: hexBytes(value.delivery_hash),
+    disputeHash: hexBytes(value.dispute_hash),
     deliveryDeadline: Number(value.delivery_deadline),
+    reviewDeadline: value.review_deadline === null || value.review_deadline === undefined
+      ? null
+      : Number(value.review_deadline),
     reviewPeriodSeconds: Number(value.review_period),
     revisionLimit: Number(value.revision_limit),
     revisionCount: Number(value.revision_count),

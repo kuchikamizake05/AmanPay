@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { buildAuthChallenge, verifyAuthChallenge } from "./challenge";
 
 describe("wallet auth challenge", () => {
-  const signer = Keypair.fromRawEd25519Seed(Buffer.alloc(32, 9));
+  const signer = Keypair.fromRawEd25519Seed(new Uint8Array(32).fill(9));
 
   it("accepts exact signed challenge", () => {
     const challenge = buildAuthChallenge({
@@ -33,7 +33,7 @@ describe("wallet auth challenge", () => {
       now: 1_000,
       expiresAt: 1_300,
     });
-    challenge.sign(Keypair.fromRawEd25519Seed(Buffer.alloc(32, 8)));
+    challenge.sign(Keypair.fromRawEd25519Seed(new Uint8Array(32).fill(8)));
     expect(() =>
       verifyAuthChallenge({
         signedXdr: challenge.toXDR(),

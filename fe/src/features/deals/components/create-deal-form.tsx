@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight,
@@ -14,6 +14,8 @@ import { createContractDeal } from "@/lib/stellar/contract";
 import { dealInputSchema, type DealInput, type DealType } from "../model/deal";
 import { asCanonicalValue, buildCanonicalTerms } from "../model/metadata";
 import { hashTerms } from "../model/terms";
+import { ParserInput } from "./parser-input";
+import { type ParsedDeal } from "../model/parser";
 
 const presets: Record<
   DealType,
@@ -55,6 +57,13 @@ function defaultDeadline() {
     .slice(0, 16);
 }
 
+function deadlineFromDays(days: number) {
+  const date = new Date(Date.now() + days * 24 * 60 * 60 * 1_000);
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+    .toISOString()
+    .slice(0, 16);
+}
+
 export function CreateDealForm() {
   const router = useRouter();
   const wallet = useWallet();
@@ -62,7 +71,39 @@ export function CreateDealForm() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Controlled states for parser integration
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
+  const [deliveryDeadline, setDeliveryDeadline] = useState(defaultDeadline());
+  const [revisionLimit, setRevisionLimit] = useState<number | undefined>(undefined);
+  const [buyerAddress, setBuyerAddress] = useState("");
+  const [buyerLocked, setBuyerLocked] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const buyerParam = params.get("buyer");
+      if (buyerParam && /^G[A-Z2-7]{55}$/.test(buyerParam)) {
+        setBuyerAddress(buyerParam);
+        setBuyerLocked(true);
+      }
+    }
+  }, []);
+
   const preset = useMemo(() => presets[dealType], [dealType]);
+
+  function handleApplyParsed(data: ParsedDeal) {
+    setDealType(data.dealType);
+    setTitle(data.title);
+    setAmount(data.amount);
+    setDeliveryDeadline(deadlineFromDays(data.deadlineDays));
+    setRevisionLimit(data.revisionLimit);
+    setDescription(
+      `Pengerjaan: ${data.title}\nDeliverable/Media pengiriman: ${data.deliverable}`
+    );
+  }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -138,7 +179,10 @@ export function CreateDealForm() {
   }
 
   return (
-    <form className="deal-form" onSubmit={submit}>
+    <div className="w-full">
+      <ParserInput onApply={handleApplyParsed} />
+
+      <form className="deal-form" onSubmit={submit}>
       <section className="form-section">
         <span className="form-section__number">01</span>
         <div className="form-section__body">
@@ -149,7 +193,10 @@ export function CreateDealForm() {
               <button
                 type="button"
                 className={`preset ${dealType === type ? "preset--active" : ""}`}
-                onClick={() => setDealType(type)}
+                onClick={() => {
+                  setDealType(type);
+                  setRevisionLimit(undefined);
+                }}
                 key={type}
               >
                 <span>{presets[type].label}</span>
@@ -171,6 +218,8 @@ export function CreateDealForm() {
               <input
                 name="title"
                 placeholder="Contoh: Landing page toko kopi"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </label>
@@ -180,6 +229,8 @@ export function CreateDealForm() {
                 name="description"
                 rows={5}
                 placeholder="Tiga section, mobile responsive, final file melalui GitHub…"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 required
               />
             </label>
@@ -190,6 +241,8 @@ export function CreateDealForm() {
                   name="amount"
                   inputMode="decimal"
                   placeholder="500000"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
                   required
                 />
                 <b>unit</b>
@@ -210,13 +263,37 @@ export function CreateDealForm() {
               <input
                 name="deliveryDeadline"
                 type="datetime-local"
-                defaultValue={defaultDeadline()}
+                value={deliveryDeadline}
+                onChange={(e) => setDeliveryDeadline(e.target.value)}
                 required
               />
             </label>
             <label className="field">
               <span>Wallet buyer</span>
-              <input name="buyer" placeholder="G…" required />
+              <div className="flex items-center gap-2 w-full">
+                <input
+                  name="buyer"
+                  placeholder="G…"
+                  value={buyerAddress}
+                  onChange={(e) => setBuyerAddress(e.target.value)}
+                  readOnly={buyerLocked}
+                  className={`w-full ${buyerLocked ? "bg-neutral-100/80 text-neutral-500 border-neutral-300 font-mono text-xs cursor-not-allowed" : ""}`}
+                  required
+                />
+                {buyerLocked && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBuyerAddress("");
+                      setBuyerLocked(false);
+                    }}
+                    className="text-xs text-red-600 hover:text-red-700 font-semibold cursor-pointer shrink-0 border border-red-200 hover:bg-red-50 px-2 py-1.5 rounded"
+                    title="Ubah alamat buyer"
+                  >
+                    Ubah
+                  </button>
+                )}
+              </div>
             </label>
           </div>
         </div>
@@ -243,12 +320,12 @@ export function CreateDealForm() {
             <label className="field">
               <span>Maksimal revisi</span>
               <input
-                key={`${dealType}-limit`}
                 name="revisionLimit"
                 type="number"
                 min="0"
                 max="10"
-                defaultValue={preset.revisions}
+                value={revisionLimit ?? preset.revisions}
+                onChange={(e) => setRevisionLimit(Number(e.target.value))}
               />
             </label>
             <label className="field">
@@ -305,5 +382,6 @@ export function CreateDealForm() {
         </button>
       </div>
     </form>
+    </div>
   );
 }
