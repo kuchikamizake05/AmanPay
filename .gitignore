@@ -1,1 +1,6 @@
 /target
+/fe/node_modules
+/fe/.next
+/fe/coverage
+/fe/tsconfig.tsbuildinfo
+/fe/.env*.local

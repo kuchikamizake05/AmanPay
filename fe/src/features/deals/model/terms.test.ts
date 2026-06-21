@@ -5,18 +5,33 @@ describe("deal terms", () => {
   it("converts seven-decimal asset amounts without floating-point math", () => {
     expect(parseAmountToStroops("500000")).toBe(5_000_000_000_000n);
     expect(parseAmountToStroops("1.2345678")).toBe(12_345_678n);
-    expect(() => parseAmountToStroops("1.23456789")).toThrow("Maksimal 7 angka desimal");
-    expect(() => parseAmountToStroops("0")).toThrow("Nominal harus lebih dari 0");
-  });
-
-  it("serializes recursively with stable key order", () => {
-    expect(canonicalizeTerms({ z: 1, nested: { b: true, a: "aman" }, a: 2 })).toBe(
-      '{"a":2,"nested":{"a":"aman","b":true},"z":1}',
+    expect(() => parseAmountToStroops("1.23456789")).toThrow(
+      "Maksimal 7 angka desimal",
+    );
+    expect(() => parseAmountToStroops("0")).toThrow(
+      "Nominal harus lebih dari 0",
+    );
+    expect(() => parseAmountToStroops("seratus")).toThrow(
+      "Nominal tidak valid",
     );
   });
 
+  it("keeps array order while sorting objects", () => {
+    expect(canonicalizeTerms([{ b: 2, a: 1 }, null])).toBe(
+      '[{"a":1,"b":2},null]',
+    );
+  });
+
+  it("serializes recursively with stable key order", () => {
+    expect(
+      canonicalizeTerms({ z: 1, nested: { b: true, a: "aman" }, a: 2 }),
+    ).toBe('{"a":2,"nested":{"a":"aman","b":true},"z":1}');
+  });
+
   it("produces deterministic lowercase SHA-256", async () => {
-    await expect(hashTerms({ seller: "GA", amountStroops: "10" })).resolves.toBe(
+    await expect(
+      hashTerms({ seller: "GA", amountStroops: "10" }),
+    ).resolves.toBe(
       "5437719d8fe17e4961f1e684b9fe59f7ad9896c14bc18332f2eff7245e11ce6d",
     );
   });

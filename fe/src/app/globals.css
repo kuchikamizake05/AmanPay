@@ -1,0 +1,884 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #f3efe5;
+  --paper-2: #fffdf7;
+  --ink: #17231e;
+  --muted: #667068;
+  --green: #116149;
+  --green-2: #dceadf;
+  --amber: #e8a62e;
+  --line: #d8d2c3;
+  --red: #a43b31;
+  --shadow: 0 24px 70px rgba(23, 35, 30, 0.12);
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  background-image: radial-gradient(
+    rgba(23, 35, 30, 0.045) 0.7px,
+    transparent 0.7px
+  );
+  background-size: 8px 8px;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+.shell {
+  width: min(1160px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.site-header {
+  height: 78px;
+  width: min(1240px, calc(100% - 32px));
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  z-index: 20;
+}
+.brand {
+  font-family: "Iowan Old Style", "Palatino Linotype", serif;
+  font-size: 24px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+}
+.site-header nav {
+  display: flex;
+  gap: 28px;
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 650;
+}
+.site-header nav a:hover {
+  color: var(--green);
+}
+.button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
+}
+.button:hover {
+  transform: translateY(-2px);
+}
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+.button--primary {
+  background: var(--green);
+  color: white;
+  box-shadow: 0 12px 30px rgba(17, 97, 73, 0.2);
+}
+.button--dark {
+  background: var(--ink);
+  color: white;
+}
+.button--small {
+  padding: 10px 16px;
+  font-size: 13px;
+}
+.button--paper {
+  background: var(--paper-2);
+  color: var(--ink);
+}
+.wallet-pill {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.5);
+  padding: 9px 13px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.wallet-pill__signal,
+.live-dot:before {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2aa779;
+  margin-right: 8px;
+}
+.hero {
+  min-height: 660px;
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  align-items: center;
+  gap: 80px;
+  padding-block: 70px;
+}
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 12px;
+  font-weight: 850;
+  color: var(--green);
+  margin: 0 0 18px;
+}
+.hero h1,
+.page-heading h1,
+.section-heading h2,
+.cta-band h2 {
+  font-family: "Iowan Old Style", "Palatino Linotype", serif;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+  margin: 0;
+}
+.hero h1 {
+  font-size: clamp(62px, 7.1vw, 100px);
+}
+em {
+  color: var(--green);
+  font-weight: 500;
+}
+.hero__lede {
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 600px;
+  margin: 30px 0;
+}
+.hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.text-link {
+  font-weight: 800;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 3px;
+}
+.microcopy {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 25px;
+}
+.receipt-card {
+  background: var(--paper-2);
+  padding: 30px;
+  min-height: 420px;
+  position: relative;
+  box-shadow: var(--shadow);
+  border: 1px solid #ded7c7;
+  transform: rotate(1.5deg);
+}
+.receipt-card:before,
+.receipt-card:after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  height: 10px;
+  background: radial-gradient(
+      circle at 5px -1px,
+      transparent 6px,
+      var(--paper-2) 6.5px
+    )
+    0 0/16px 10px;
+}
+.receipt-card:before {
+  top: -6px;
+}
+.receipt-card:after {
+  bottom: -6px;
+  transform: rotate(180deg);
+}
+.receipt-card__top {
+  display: flex;
+  justify-content: space-between;
+  font: 700 11px/1 monospace;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 18px;
+}
+.live-dot {
+  color: var(--green);
+}
+.receipt-card__label {
+  margin: 34px 0 8px;
+  color: var(--muted);
+}
+.receipt-card__amount {
+  font:
+    700 42px/1 "Iowan Old Style",
+    serif;
+}
+.secure-line {
+  display: flex;
+  gap: 13px;
+  background: var(--green-2);
+  color: var(--green);
+  padding: 17px;
+  margin: 30px 0;
+}
+.secure-line div {
+  display: flex;
+  flex-direction: column;
+}
+.secure-line span {
+  font-size: 12px;
+  margin-top: 3px;
+}
+.receipt-card__parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  border-top: 1px dashed var(--line);
+  padding-top: 21px;
+  font: 12px/1.8 monospace;
+  color: var(--muted);
+}
+.receipt-card__parties b {
+  color: var(--ink);
+}
+.receipt-card__seal {
+  position: absolute;
+  right: 27px;
+  bottom: 22px;
+  width: 86px;
+  height: 86px;
+  border: 2px solid rgba(17, 97, 73, 0.35);
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  color: rgba(17, 97, 73, 0.58);
+  font: bold 10px/1.2 monospace;
+  transform: rotate(-12deg);
+}
+.trust-strip {
+  border-block: 1px solid var(--line);
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 35px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  font-weight: 800;
+}
+.trust-strip i {
+  width: 4px;
+  height: 4px;
+  background: var(--amber);
+  border-radius: 50%;
+}
+.section {
+  padding-block: 120px;
+}
+.section-heading h2 {
+  font-size: clamp(42px, 5vw, 68px);
+}
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-top: 65px;
+}
+.steps-grid article {
+  background: var(--paper);
+  padding: 38px;
+  position: relative;
+  min-height: 300px;
+}
+.steps-grid svg {
+  color: var(--green);
+  width: 30px;
+  height: 30px;
+  margin-top: 45px;
+}
+.steps-grid h3 {
+  font:
+    700 27px/1.1 "Iowan Old Style",
+    serif;
+  margin: 25px 0 12px;
+}
+.steps-grid p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+.step-number {
+  position: absolute;
+  right: 25px;
+  top: 22px;
+  font: 12px monospace;
+  color: #999;
+}
+.cta-band {
+  background: var(--green);
+  color: white;
+  margin-bottom: 55px;
+  padding: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cta-band .eyebrow {
+  color: #b9dac9;
+}
+.cta-band h2 {
+  font-size: 48px;
+}
+.reveal {
+  animation: rise 0.7s ease both;
+}
+.reveal--late {
+  animation-delay: 0.15s;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+.app-page {
+  padding-block: 70px 120px;
+}
+.page-heading {
+  max-width: 780px;
+  margin-bottom: 60px;
+}
+.page-heading h1 {
+  font-size: clamp(50px, 6vw, 78px);
+}
+.page-heading > p:last-child {
+  color: var(--muted);
+  font-size: 18px;
+}
+.deal-form {
+  display: grid;
+  gap: 18px;
+}
+.form-section {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  border-top: 1px solid var(--line);
+  padding: 45px 0;
+}
+.form-section__number {
+  font: 700 12px monospace;
+  color: var(--green);
+}
+.form-section__body h2 {
+  font:
+    700 31px/1.1 "Iowan Old Style",
+    serif;
+  margin: 0;
+}
+.form-section__body > p {
+  color: var(--muted);
+  margin: 8px 0 30px;
+}
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.preset {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.4);
+  text-align: left;
+  padding: 20px;
+  min-height: 100px;
+  cursor: pointer;
+  position: relative;
+}
+.preset span {
+  display: block;
+  font-weight: 800;
+  margin-bottom: 7px;
+}
+.preset small {
+  color: var(--muted);
+}
+.preset svg {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  color: var(--green);
+}
+.preset--active {
+  border-color: var(--green);
+  background: var(--green-2);
+}
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+.field {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 750;
+}
+.field--wide {
+  grid-column: 1/-1;
+}
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  padding: 15px 16px;
+  border-radius: 3px;
+  outline: none;
+  color: var(--ink);
+}
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(17, 97, 73, 0.1);
+}
+.field small {
+  font-weight: 500;
+  color: var(--muted);
+}
+.input-affix {
+  position: relative;
+}
+.input-affix b {
+  position: absolute;
+  right: 14px;
+  top: 16px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.sign-panel {
+  margin-left: 80px;
+  background: var(--ink);
+  color: white;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.sign-panel > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sign-panel span {
+  display: flex;
+  flex-direction: column;
+}
+.sign-panel small {
+  color: #a9b3ad;
+  margin-top: 3px;
+}
+.sign-panel .button {
+  margin-left: auto;
+}
+.form-error {
+  color: #ffb4aa;
+  font-size: 13px;
+}
+.form-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #cde5d8;
+  font-size: 13px;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.status {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 17px 19px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  width: max-content;
+  max-width: 100%;
+}
+.status__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-top: 5px;
+  background: var(--amber);
+}
+.status--secure .status__dot,
+.status--success .status__dot {
+  background: #2a9c70;
+}
+.status--warning .status__dot {
+  background: #c46a36;
+}
+.status p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.deal-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 70px;
+}
+.deal-kicker {
+  display: flex;
+  justify-content: space-between;
+  font: 750 11px monospace;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.verified {
+  display: flex;
+  gap: 6px;
+  color: var(--green);
+}
+.deal-detail h1 {
+  font:
+    700 clamp(45px, 5vw, 70px)/1 "Iowan Old Style",
+    serif;
+  letter-spacing: -0.04em;
+  margin: 25px 0 14px;
+}
+.deal-description {
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin-bottom: 30px;
+}
+.detail-section {
+  margin-top: 55px;
+}
+.detail-section h2 {
+  font:
+    700 25px "Iowan Old Style",
+    serif;
+}
+.party-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.party-grid article {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.35);
+  padding: 19px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.party-grid small {
+  font: 10px monospace;
+  color: var(--muted);
+}
+.party-grid span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.blockchain-box {
+  background: var(--ink);
+  color: white;
+  padding: 28px;
+}
+.blockchain-box > div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.blockchain-box h2 {
+  margin: 0;
+}
+.blockchain-box dl {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  font: 12px/1.6 monospace;
+}
+.blockchain-box dt {
+  color: #94a29b;
+}
+.blockchain-box dd {
+  text-align: right;
+}
+.blockchain-box button {
+  background: none;
+  border: 0;
+  color: white;
+  cursor: pointer;
+}
+.blockchain-box a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #b9dac9;
+  font-size: 13px;
+}
+.deal-summary {
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  padding: 27px;
+  height: max-content;
+  position: sticky;
+  top: 30px;
+}
+.deal-summary > p:first-child {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.deal-summary > strong {
+  font:
+    700 42px "Iowan Old Style",
+    serif;
+}
+.deal-summary > span {
+  margin-left: 8px;
+}
+.deal-summary hr {
+  border: 0;
+  border-top: 1px dashed var(--line);
+  margin: 24px 0;
+}
+.deal-summary dl {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+}
+.deal-summary dl div {
+  display: flex;
+}
+.deal-summary dt {
+  color: var(--muted);
+}
+.deal-summary dd {
+  text-align: right;
+  margin-left: auto;
+}
+.summary-note {
+  display: flex;
+  gap: 8px;
+  background: var(--green-2);
+  color: var(--green);
+  padding: 13px;
+  font-size: 12px;
+  margin-top: 22px;
+}
+.loading-state,
+.empty-state {
+  min-height: 380px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  justify-items: center;
+  gap: 10px;
+}
+.empty-state h2 {
+  font:
+    700 32px "Iowan Old Style",
+    serif;
+  margin: 5px;
+}
+.empty-state p {
+  color: var(--muted);
+}
+.empty-state--compact {
+  border: 1px dashed var(--line);
+  margin-top: 30px;
+}
+.dashboard-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+.dashboard-head h1 {
+  font:
+    700 65px/1 "Iowan Old Style",
+    serif;
+  margin: 0;
+}
+.dashboard-head > div > p:last-child {
+  font: 12px monospace;
+  color: var(--muted);
+}
+.notice {
+  background: #fff3cf;
+  border: 1px solid #e5ce84;
+  padding: 13px;
+  margin-top: 30px;
+}
+.deal-list {
+  margin-top: 45px;
+  border-top: 1px solid var(--line);
+}
+.deal-row {
+  display: grid;
+  grid-template-columns: 75px 1fr 150px 25px;
+  align-items: center;
+  gap: 15px;
+  padding: 25px 10px;
+  border-bottom: 1px solid var(--line);
+  transition: background 0.2s;
+}
+.deal-row:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+.deal-row__id {
+  font: 11px monospace;
+  color: var(--muted);
+}
+.deal-row > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.deal-row span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.deal-row > strong {
+  text-align: right;
+}
+.deal-row svg {
+  color: var(--green);
+}
+@media (max-width: 800px) {
+  .site-header nav {
+    display: none;
+  }
+  .site-header {
+    gap: 10px;
+  }
+  .site-header .button {
+    margin-left: auto;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-top: 50px;
+  }
+  .hero h1 {
+    font-size: 58px;
+  }
+  .receipt-card {
+    transform: none;
+  }
+  .trust-strip {
+    overflow: auto;
+    justify-content: flex-start;
+    padding: 0 20px;
+  }
+  .steps-grid,
+  .preset-grid,
+  .party-grid {
+    grid-template-columns: 1fr;
+  }
+  .cta-band {
+    padding: 35px;
+    display: grid;
+    gap: 30px;
+  }
+  .cta-band h2 {
+    font-size: 38px;
+  }
+  .form-section {
+    grid-template-columns: 1fr;
+  }
+  .form-section__number {
+    margin-bottom: 12px;
+  }
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+  .field--wide {
+    grid-column: auto;
+  }
+  .sign-panel {
+    margin-left: 0;
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .sign-panel .button {
+    margin-left: 0;
+  }
+  .deal-detail {
+    grid-template-columns: 1fr;
+  }
+  .deal-summary {
+    position: static;
+    grid-row: 1;
+  }
+  .blockchain-box dl {
+    grid-template-columns: 1fr;
+  }
+  .blockchain-box dd {
+    text-align: left;
+    margin: 0 0 10px;
+    overflow-wrap: anywhere;
+  }
+  .dashboard-head {
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .dashboard-head h1 {
+    font-size: 48px;
+  }
+  .deal-row {
+    grid-template-columns: 45px 1fr 20px;
+  }
+  .deal-row > strong {
+    display: none;
+  }
+}

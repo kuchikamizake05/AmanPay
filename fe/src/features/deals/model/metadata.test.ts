@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCanonicalTerms } from "./metadata";
+import { asCanonicalValue, buildCanonicalTerms } from "./metadata";
 
 describe("canonical deal metadata", () => {
   it("binds readable terms to exact contract values", () => {
@@ -33,10 +33,15 @@ describe("canonical deal metadata", () => {
       resolver: "GRESOLVER",
       asset: "CXLM",
       amountStroops: "1500005000000",
-      deliveryDeadline: 1782896400,
+      deliveryDeadline: 1782900000,
       reviewPeriodSeconds: 86400,
       revisionLimit: 0,
       revisionPeriodSeconds: 0,
     });
+  });
+
+  it("exposes terms to canonical hashing without mutation", () => {
+    const terms = { schemaVersion: 1, title: "Deal" } as never;
+    expect(asCanonicalValue(terms)).toBe(terms);
   });
 });

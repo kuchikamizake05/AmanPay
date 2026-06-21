@@ -16,13 +16,19 @@ export const dealStatuses = [
 ] as const;
 export type DealStatus = (typeof dealStatuses)[number];
 
-const addressSchema = z.string().regex(/^[GC][A-Z2-7]{55}$/, "Alamat Stellar tidak valid");
+const addressSchema = z
+  .string()
+  .regex(/^[GC][A-Z2-7]{55}$/, "Alamat Stellar tidak valid");
 
 export const dealInputSchema = z
   .object({
     dealType: z.enum(dealTypes),
     title: z.string().trim().min(3, "Judul minimal 3 karakter").max(100),
-    description: z.string().trim().min(10, "Deskripsi minimal 10 karakter").max(2_000),
+    description: z
+      .string()
+      .trim()
+      .min(10, "Deskripsi minimal 10 karakter")
+      .max(2_000),
     seller: addressSchema,
     buyer: addressSchema,
     resolver: addressSchema,
@@ -77,7 +83,13 @@ export const dealInputSchema = z
 
 export type DealInput = z.infer<typeof dealInputSchema>;
 
-type StatusTone = "waiting" | "secure" | "review" | "warning" | "success" | "neutral";
+type StatusTone =
+  | "waiting"
+  | "secure"
+  | "review"
+  | "warning"
+  | "success"
+  | "neutral";
 
 const statusPresentation: Record<
   DealStatus,

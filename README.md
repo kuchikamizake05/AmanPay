@@ -17,7 +17,30 @@ Contract core telah tersedia dengan:
 - 18 unit tests dan 98.06% line coverage
 - Testnet smoke flow nyata untuk native XLM dan mock USDC
 
-Frontend, metadata backend, AI parser, account profile, dan reputation belum termasuk phase ini. Lihat [PRD.md](PRD.md) untuk product scope lengkap.
+AI parser, account profile, dan reputation belum termasuk phase kontrak ini. Lihat [PRD.md](PRD.md) untuk product scope lengkap.
+
+## Phase 2 Status
+
+Frontend dasar tersedia di `fe/` dengan:
+
+- Landing page, create deal, public deal detail, dan wallet dashboard
+- Stellar Wallets Kit untuk Freighter, xBull, LOBSTR, dan Albedo di testnet
+- Integrasi nyata `create_deal` dan `get_deal`
+- Canonical JSON + SHA-256 `terms_hash`
+- Supabase metadata registration yang diverifikasi terhadap state on-chain
+- XLM dan mock USDC selector
+- Unit/component tests dengan coverage di atas 80%
+
+Jalankan frontend:
+
+```bash
+cd fe
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+Isi `STELLAR_READ_SOURCE`, `NEXT_PUBLIC_DEFAULT_RESOLVER`, dan credential Supabase di `.env.local`. Terapkan migration pada `supabase/migrations/` sebelum menguji metadata dan dashboard.
 
 ## Project Structure
 

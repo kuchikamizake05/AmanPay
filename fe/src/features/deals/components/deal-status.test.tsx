@@ -8,4 +8,10 @@ describe("DealStatusBadge", () => {
     expect(screen.getByText("Dana terkunci")).toBeVisible();
     expect(screen.getByText(/Seller dapat mulai/)).toBeVisible();
   });
+
+  it("can render compact status without explanation", () => {
+    render(<DealStatusBadge status="Released" />);
+    expect(screen.getByText("Dana diteruskan")).toBeVisible();
+    expect(screen.queryByText(/Deal selesai/)).not.toBeInTheDocument();
+  });
 });

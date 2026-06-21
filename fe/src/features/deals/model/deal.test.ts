@@ -10,7 +10,7 @@ const validInput = {
   resolver: "GCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDCH",
   asset: "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
   amount: "500000",
-  deliveryDeadline: "2026-06-30T12:00",
+  deliveryDeadline: "2099-06-30T12:00",
   reviewPeriodHours: 48,
   revisionLimit: 2,
   revisionPeriodHours: 48,
@@ -29,7 +29,10 @@ describe("deal input", () => {
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues.map((issue) => issue.message)).toEqual(
-      expect.arrayContaining(["Buyer harus berbeda dari seller", "Periode revisi wajib diisi"]),
+      expect.arrayContaining([
+        "Buyer harus berbeda dari seller",
+        "Periode revisi wajib diisi",
+      ]),
     );
   });
 });

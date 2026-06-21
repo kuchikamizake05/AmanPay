@@ -19,7 +19,8 @@ export function parseAmountToStroops(value: string): bigint {
     throw new Error("Maksimal 7 angka desimal");
   }
 
-  const result = BigInt(whole) * STROOPS_PER_UNIT + BigInt(fraction.padEnd(7, "0") || "0");
+  const result =
+    BigInt(whole) * STROOPS_PER_UNIT + BigInt(fraction.padEnd(7, "0") || "0");
   if (result <= 0n) {
     throw new Error("Nominal harus lebih dari 0");
   }
@@ -42,6 +43,11 @@ export function canonicalizeTerms(value: CanonicalValue): string {
 
 export async function hashTerms(value: CanonicalValue): Promise<string> {
   const bytes = new TextEncoder().encode(canonicalizeTerms(value));
-  const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
-  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  const digest = await globalThis.crypto.subtle.digest(
+    "SHA-256",
+    Uint8Array.from(bytes).buffer,
+  );
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
 }
