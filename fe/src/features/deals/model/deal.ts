@@ -96,44 +96,44 @@ const statusPresentation: Record<
   { label: string; tone: StatusTone; description: string }
 > = {
   Created: {
-    label: "Menunggu pendanaan",
+    label: "Awaiting Funding",
     tone: "waiting",
-    description: "Deal sudah dibuat. Buyer belum mengunci dana.",
+    description: "Deal parameters initialized. Waiting for buyer to fund escrow.",
   },
   Funded: {
-    label: "Dana terkunci",
+    label: "Escrow Locked",
     tone: "secure",
-    description: "Dana buyer aman di escrow. Seller dapat mulai memenuhi deal.",
+    description: "Buyer funds locked in Soroban smart contract. Seller can fulfill deal.",
   },
   Delivered: {
-    label: "Menunggu pemeriksaan",
+    label: "Delivered (In Review)",
     tone: "review",
-    description: "Seller sudah mengirim hasil. Buyer sedang memeriksa.",
+    description: "Seller submitted deliverables/credentials. Buyer is reviewing.",
   },
   RevisionRequested: {
-    label: "Perlu revisi",
+    label: "Revision Requested",
     tone: "warning",
-    description: "Buyer meminta perbaikan sebelum dana diteruskan.",
+    description: "Buyer requested adjustments/replacements before settlement.",
   },
   Disputed: {
-    label: "Dalam penyelesaian",
+    label: "Under Arbitration",
     tone: "warning",
-    description: "Deal sedang ditinjau resolver yang disepakati.",
+    description: "Deal disputed. Awaiting resolution decision from designated resolver.",
   },
   Released: {
-    label: "Dana diteruskan",
+    label: "Funds Released",
     tone: "success",
-    description: "Deal selesai dan dana sudah diteruskan ke seller.",
+    description: "Deal successfully settled and funds transferred to seller.",
   },
   Refunded: {
-    label: "Dana dikembalikan",
+    label: "Refunded to Buyer",
     tone: "neutral",
-    description: "Dana escrow sudah kembali ke buyer.",
+    description: "Escrow closed. 100% of collateral has been refunded to buyer.",
   },
   Cancelled: {
-    label: "Deal dibatalkan",
+    label: "Deal Cancelled",
     tone: "neutral",
-    description: "Deal dibatalkan sebelum pendanaan.",
+    description: "Deal cancelled by creator prior to funding.",
   },
 };
 

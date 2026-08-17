@@ -37,14 +37,14 @@ export function formatShareMessage(
   origin: string
 ): string {
   const statusEmoji = status === "Released" ? "✅" : "↩️";
-  const statusText = status === "Released" ? "RELEASED (Dana Dirilis)" : "REFUNDED (Dana Dikembalikan)";
-  return `⚡ AmanPay Escrow Receipt: Deal #${id.padStart(4, "0")} sukses diselesaikan!
+  const statusText = status === "Released" ? "RELEASED (Funds Settled)" : "REFUNDED (Funds Returned)";
+  return `⚡ AmanPay Escrow Receipt: Deal #${id.padStart(4, "0")} successfully settled!
 
-Judul: ${title}
-Nominal: ${amount} ${assetCode}
+Title: ${title}
+Amount: ${amount} ${assetCode}
 Status: ${statusEmoji} ${statusText}
 
-Lihat resi digital terverifikasi on-chain:
+Verify on-chain settlement receipt:
 ${origin}/deals/${id}/receipt`;
 }
 
@@ -69,10 +69,10 @@ export function PublicReceipt({ id }: { id: string }) {
     return (
       <div className="empty-state">
         <ShieldAlert size={48} className="text-[#a43b31]" />
-        <h2>Resi tidak ditemukan</h2>
+        <h2>Receipt Not Found</h2>
         <p>{error}</p>
         <Link href="/" className="button button--primary button--small mt-4">
-          Kembali ke Beranda
+          Return to Home
         </Link>
       </div>
     );
@@ -81,7 +81,7 @@ export function PublicReceipt({ id }: { id: string }) {
   if (!payload) {
     return (
       <div className="loading-state">
-        <LoaderCircle className="spin text-[#116149]" /> Membaca salinan resi dari blockchain...
+        <LoaderCircle className="spin text-[#116149]" /> Reading settlement receipt from blockchain...
       </div>
     );
   }
@@ -95,18 +95,34 @@ export function PublicReceipt({ id }: { id: string }) {
     return (
       <div className="empty-state">
         <ShieldAlert size={48} className="text-[#e8a62e]" />
-        <h2>Resi Belum Diterbitkan</h2>
-        <p>Halaman resi publik hanya tersedia untuk deal yang telah diselesaikan (Released atau Refunded).</p>
+        <h2>Receipt Not Yet Published</h2>
+        <p>Public receipts are issued only after an escrow is finalized (Released or Refunded).</p>
         <Link href={`/deals/${id}`} className="button button--primary button--small mt-4">
-          Buka Halaman Detail Deal
+          Open Deal Details
         </Link>
       </div>
     );
   }
 
-  const amount = (Number(chain.amountStroops) / 10_000_000).toLocaleString("id-ID", {
+  const amount = (Number(chain.amountStroops) / 10_000_000).toLocaleString("en-US", {
     maximumFractionDigits: 7,
   });
+  const assetCode =
+    stellarConfig.assets.find((asset) => asset.contractId === chain.asset)?.code ?? "USDC";
+
+  // Timeline events for completed date
+  const completeEvent = payload.timeline.find(
+    (ev) => ev.resulting_status === "Released" || ev.resulting_status === "Refunded"
+  );
+  const completedDate = completeEvent
+    ? new Date(completeEvent.created_at).toLocaleString("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      })
+    : new Date().toLocaleString("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
   const assetCode =
     stellarConfig.assets.find((asset) => asset.contractId === chain.asset)?.code ?? "ASSET";
 
@@ -157,19 +173,19 @@ export function PublicReceipt({ id }: { id: string }) {
         href={`/deals/${id}`}
         className="inline-flex items-center gap-2 text-sm font-semibold text-[#667068] hover:text-[#17231e] mb-6 transition-colors"
       >
-        <ArrowLeft size={16} /> Kembali ke detail deal
+        <ArrowLeft size={16} /> Return to deal details
       </Link>
 
       {/* Serrated Physical Receipt Card */}
       <div className="receipt-card mb-8">
         <div className="receipt-card__top">
-          <span>AMANPAY OFF-CHAIN TRANSCRIPT</span>
+          <span>AMANPAY SETTLEMENT TRANSCRIPT</span>
           <span>{chain.status.toUpperCase()}</span>
         </div>
 
         <div className="my-6 text-center">
           <span className="text-xs uppercase tracking-widest text-[#667068] block mb-1">
-            Total Transaksi
+            Total Settled Amount
           </span>
           <div className="flex items-baseline justify-center gap-1.5">
             <strong className="font-serif text-4xl font-extrabold text-[#17231e]">
@@ -182,35 +198,35 @@ export function PublicReceipt({ id }: { id: string }) {
         {/* Receipt Properties */}
         <div className="border-t border-dashed border-[#d8d2c3] pt-5 pb-4 text-xs font-mono text-[#17231e]">
           <dl className="grid grid-cols-[140px_1fr] gap-y-3 leading-relaxed">
-            <dt className="text-[#667068]">ID Transaksi:</dt>
+            <dt className="text-[#667068]">Transaction ID:</dt>
             <dd className="font-bold">DEAL #{chain.id.padStart(4, "0")}</dd>
 
-            <dt className="text-[#667068]">Judul Deal:</dt>
+            <dt className="text-[#667068]">Deal Title:</dt>
             <dd className="font-sans font-bold text-sm text-[#17231e]">
               {metadata?.title ?? `${chain.dealType} Deal`}
             </dd>
 
-            <dt className="text-[#667068]">Tipe Deal:</dt>
+            <dt className="text-[#667068]">Deal Type:</dt>
             <dd>{chain.dealType}</dd>
 
-            <dt className="text-[#667068]">Status Escrow:</dt>
+            <dt className="text-[#667068]">Escrow Status:</dt>
             <dd className="font-bold uppercase tracking-wider text-[#116149]">
-              {chain.status === "Released" ? "Released (Dirilis)" : "Refunded (Dikembalikan)"}
+              {chain.status === "Released" ? "Released (Settled)" : "Refunded (Returned)"}
             </dd>
 
-            <dt className="text-[#667068]">Selesai Pada:</dt>
+            <dt className="text-[#667068]">Settled At:</dt>
             <dd>{completedDate}</dd>
 
             <div className="col-span-2 border-t border-dotted border-[#d8d2c3] my-2" />
 
-            <dt className="text-[#667068]">Alamat Seller:</dt>
+            <dt className="text-[#667068]">Seller Address:</dt>
             <dd className="break-all">
               <Link href={`/profiles/${chain.seller}`} className="underline hover:text-[#116149]">
                 {short(chain.seller)}
               </Link>
             </dd>
 
-            <dt className="text-[#667068]">Alamat Buyer:</dt>
+            <dt className="text-[#667068]">Buyer Address:</dt>
             <dd className="break-all">
               <Link href={`/profiles/${chain.buyer}`} className="underline hover:text-[#116149]">
                 {short(chain.buyer)}
@@ -255,7 +271,7 @@ export function PublicReceipt({ id }: { id: string }) {
       {/* Share / Copy Options Panel */}
       <div className="bg-white/40 backdrop-blur-md border border-[#d8d2c3] rounded-xl p-6 shadow-sm">
         <h3 className="font-bold text-sm text-[#17231e] mb-4 flex items-center gap-2">
-          <Share2 size={16} className="text-[#116149]" /> Bagikan Resi Transaksi
+          <Share2 size={16} className="text-[#116149]" /> Share Settlement Receipt
         </h3>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
@@ -263,13 +279,13 @@ export function PublicReceipt({ id }: { id: string }) {
             onClick={copyReceiptLink}
             className="button button--paper border border-[#d8d2c3] py-2 px-3 text-xs flex items-center justify-center gap-1.5 cursor-pointer font-semibold select-none hover:bg-white"
           >
-            {copiedLink ? "Link Tersalin!" : "Salin Link Resi"}
+            {copiedLink ? "Link Copied!" : "Copy Receipt Link"}
           </button>
           <button
             onClick={copyReceiptText}
             className="button button--paper border border-[#d8d2c3] py-2 px-3 text-xs flex items-center justify-center gap-1.5 cursor-pointer font-semibold select-none hover:bg-white"
           >
-            {copiedText ? "Teks Tersalin!" : "Salin Resi Teks"}
+            {copiedText ? "Text Copied!" : "Copy Summary Text"}
           </button>
         </div>
 
@@ -280,7 +296,7 @@ export function PublicReceipt({ id }: { id: string }) {
             rel="noreferrer"
             className="button button--primary button--small text-xs py-2.5 flex items-center justify-center gap-2 cursor-pointer font-semibold w-full"
           >
-            <Send size={14} /> Kirim via WhatsApp
+            <Send size={14} /> Send via WhatsApp
           </a>
           <a
             href={telegramUrl}
@@ -288,7 +304,7 @@ export function PublicReceipt({ id }: { id: string }) {
             rel="noreferrer"
             className="button button--dark button--small text-xs py-2.5 flex items-center justify-center gap-2 cursor-pointer font-semibold w-full"
           >
-            <Send size={14} /> Kirim via Telegram
+            <Send size={14} /> Send via Telegram
           </a>
         </div>
       </div>

@@ -614,11 +614,19 @@ em {
 }
 .party-grid article {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
   padding: 19px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   gap: 7px;
+  transition: all 0.2s ease;
+}
+.party-grid article:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--green);
+  transform: translateY(-2px);
 }
 .party-grid small {
   font: 10px monospace;
@@ -632,6 +640,8 @@ em {
   background: var(--ink);
   color: white;
   padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(23, 35, 30, 0.15);
 }
 .blockchain-box > div {
   display: flex;

@@ -53,7 +53,7 @@ export function Dashboard() {
   if (loading) {
     return (
       <div className="loading-state">
-        <LoaderCircle className="spin text-[#116149]" /> Memuat daftar kesepakatan...
+        <LoaderCircle className="spin text-[#116149]" /> Loading your escrow deals...
       </div>
     );
   }
@@ -62,19 +62,22 @@ export function Dashboard() {
     return (
       <div className="empty-state">
         <Wallet size={30} />
-        <h2>Hubungkan wallet untuk melihat deal</h2>
-        <p>Dashboard mengikuti wallet, tanpa akun dan password tambahan.</p>
+        <h2>Connect Wallet to View Deals</h2>
+        <p>Your dashboard is authenticated directly via your cryptographic Stellar wallet address.</p>
         <button className="button button--primary" onClick={wallet.connect}>
-          Hubungkan wallet
+          Connect Wallet
         </button>
       </div>
     );
+
+  const totalVolume = deals.reduce((acc, deal) => acc + (Number(deal.amount_stroops) / 10_000_000), 0);
+
   return (
     <div>
       <div className="dashboard-head">
         <div>
-          <p className="eyebrow">Ruang transaksi</p>
-          <h1>Deal saya</h1>
+          <p className="eyebrow">Transaction Control Center</p>
+          <h1>My Escrow Deals</h1>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <span className="text-xs text-neutral-500 font-mono">
               {wallet.address.slice(0, 8)}…{wallet.address.slice(-6)}
@@ -82,30 +85,48 @@ export function Dashboard() {
             <button
               onClick={handleShareWallet}
               className="text-[10px] bg-neutral-100 hover:bg-emerald-50 text-neutral-600 hover:text-emerald-700 border border-neutral-200 hover:border-emerald-200 px-2 py-0.5 rounded font-semibold cursor-pointer transition-all flex items-center gap-1 shrink-0"
-              title="Salin link undangan untuk Seller"
+              title="Copy buyer invite link"
             >
               {copied ? (
                 <>
                   <Check size={10} className="text-emerald-600" />
-                  <span>Link disalin!</span>
+                  <span>Link copied!</span>
                 </>
               ) : (
                 <>
                   <Share2 size={10} />
-                  <span>Bagikan alamat ke Seller</span>
+                  <span>Share Address to Counterparty</span>
                 </>
               )}
             </button>
           </div>
         </div>
         <Link className="button button--primary" href="/deals/new">
-          <Plus size={17} /> Buat deal
+          <Plus size={17} /> Create New Deal
         </Link>
       </div>
+
+      {/* Analytics Summary Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+        <div className="bg-white/60 border border-[#d8d2c3] p-4 rounded-xl shadow-2xs">
+          <p className="text-xs text-[#667068] font-medium">Total Escrows</p>
+          <p className="text-2xl font-black text-[#17231e] mt-1">{deals.length}</p>
+        </div>
+        <div className="bg-white/60 border border-[#d8d2c3] p-4 rounded-xl shadow-2xs">
+          <p className="text-xs text-[#667068] font-medium">Total Volume Escrowed</p>
+          <p className="text-2xl font-black text-[#116149] mt-1">
+            {totalVolume.toLocaleString("en-US", { maximumFractionDigits: 2 })} <span className="text-xs font-semibold">USDC/XLM</span>
+          </p>
+        </div>
+        <div className="bg-white/60 border border-[#d8d2c3] p-4 rounded-xl shadow-2xs">
+          <p className="text-xs text-[#667068] font-medium">Settlement Guarantee</p>
+          <p className="text-2xl font-black text-[#e8a62e] mt-1">100% Non-Custodial</p>
+        </div>
+      </div>
+
       {!configured ? (
         <div className="notice">
-          Supabase belum dikonfigurasi. Tambahkan environment untuk mengaktifkan
-          indeks dashboard.
+          Supabase metadata storage not configured. On-chain contracts remain operational.
         </div>
       ) : null}
       {deals.length ? (
@@ -124,13 +145,13 @@ export function Dashboard() {
                 <span>
                   {deal.deal_type} ·{" "}
                   {deal.seller_address === wallet.address
-                    ? "Kamu seller"
-                    : "Kamu buyer"}
+                    ? "You are Seller"
+                    : "You are Buyer"}
                 </span>
               </div>
               <strong>
                 {(Number(deal.amount_stroops) / 10_000_000).toLocaleString(
-                  "id-ID",
+                  "en-US",
                 )}
               </strong>
               <ArrowRight size={18} />
@@ -139,10 +160,10 @@ export function Dashboard() {
         </div>
       ) : (
         <div className="empty-state empty-state--compact">
-          <h2>Belum ada deal di wallet ini</h2>
-          <p>Deal pertama selalu terasa paling resmi. Mari buat satu.</p>
+          <h2>No deals found for this wallet</h2>
+          <p>Create your first trustless escrow transaction backed by Soroban smart contracts.</p>
           <Link href="/deals/new" className="text-link">
-            Buat deal pertama <ArrowRight size={16} />
+            Create first deal <ArrowRight size={16} />
           </Link>
         </div>
       )}

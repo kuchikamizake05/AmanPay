@@ -114,6 +114,46 @@ export function DealDetail({ id }: { id: string }) {
             {metadata?.description ??
               "Off-chain metadata not loaded. On-chain escrow state remains fully verifiable."}
           </p>
+
+          {/* Lifecycle Visual Stepper */}
+          <div className="bg-white/50 border border-[#d8d2c3] rounded-xl p-4 my-6 shadow-2xs">
+            <div className="grid grid-cols-4 gap-2 text-center text-xs font-semibold">
+              <div className={`p-2 rounded-lg transition-all ${
+                chain.status === "Created" 
+                  ? "bg-[#116149] text-white shadow-xs" 
+                  : "bg-[#116149]/10 text-[#116149]"
+              }`}>
+                1. Created
+              </div>
+              <div className={`p-2 rounded-lg transition-all ${
+                chain.status === "Funded" || chain.status === "RevisionRequested"
+                  ? "bg-[#116149] text-white shadow-xs" 
+                  : ["Delivered", "Released", "Refunded", "Disputed"].includes(chain.status)
+                  ? "bg-[#116149]/10 text-[#116149]"
+                  : "bg-neutral-100 text-neutral-400"
+              }`}>
+                2. Funded
+              </div>
+              <div className={`p-2 rounded-lg transition-all ${
+                chain.status === "Delivered" 
+                  ? "bg-[#116149] text-white shadow-xs" 
+                  : ["Released", "Refunded"].includes(chain.status)
+                  ? "bg-[#116149]/10 text-[#116149]"
+                  : "bg-neutral-100 text-neutral-400"
+              }`}>
+                3. Delivered
+              </div>
+              <div className={`p-2 rounded-lg transition-all ${
+                ["Released", "Refunded"].includes(chain.status)
+                  ? chain.status === "Released" ? "bg-[#116149] text-white shadow-xs" : "bg-neutral-800 text-white"
+                  : chain.status === "Disputed" ? "bg-amber-600 text-white"
+                  : "bg-neutral-100 text-neutral-400"
+              }`}>
+                4. {chain.status === "Refunded" ? "Refunded" : chain.status === "Disputed" ? "Disputed" : "Settled"}
+              </div>
+            </div>
+          </div>
+
           <DealStatusBadge status={chain.status} showDescription />
 
           {(chain.status === "Released" || chain.status === "Refunded") && (
