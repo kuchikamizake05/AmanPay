@@ -186,8 +186,8 @@ export function CreateDealForm() {
       <section className="form-section">
         <span className="form-section__number">01</span>
         <div className="form-section__body">
-          <h2>Pilih bentuk deal</h2>
-          <p>Semua memakai escrow yang sama; bahasanya kami sesuaikan.</p>
+          <h2>Select Deal Structure</h2>
+          <p>All deals execute on the same non-custodial Soroban escrow engine.</p>
           <div className="preset-grid">
             {(Object.keys(presets) as DealType[]).map((type) => (
               <button
@@ -210,25 +210,25 @@ export function CreateDealForm() {
       <section className="form-section">
         <span className="form-section__number">02</span>
         <div className="form-section__body">
-          <h2>Apa yang disepakati?</h2>
-          <p>Tulis seperti menjelaskan deal kepada teman yang netral.</p>
+          <h2>Agreement Terms</h2>
+          <p>Describe deliverables and conditions clearly.</p>
           <div className="field-grid">
             <label className="field field--wide">
-              <span>Judul deal</span>
+              <span>Deal Title</span>
               <input
                 name="title"
-                placeholder="Contoh: Landing page toko kopi"
+                placeholder="e.g.: Valorant Radiant Account + Clean Original Email"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </label>
             <label className="field field--wide">
-              <span>Deskripsi dan hasil yang diharapkan</span>
+              <span>Description & Expected Deliverables</span>
               <textarea
                 name="description"
                 rows={5}
-                placeholder="Tiga section, mobile responsive, final file melalui GitHub…"
+                placeholder="Details of login credentials, recovery code transfer, or GitHub source code deliverables…"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
@@ -236,7 +236,7 @@ export function CreateDealForm() {
             </label>
             <label className="field">
               <div className="flex justify-between items-center">
-                <span>Nominal</span>
+                <span>Amount</span>
                 {amount && parseFloat(amount) > 0 ? (
                   <span className="text-[11px] text-emerald-600 font-medium font-sans">
                     ≈ {estimateIdrValue(amount, "USDC")}
@@ -256,7 +256,7 @@ export function CreateDealForm() {
               </div>
             </label>
             <label className="field">
-              <span>Aset</span>
+              <span>Asset</span>
               <select name="asset">
                 {stellarConfig.assets.map((asset) => (
                   <option key={asset.code} value={asset.contractId}>
@@ -266,7 +266,7 @@ export function CreateDealForm() {
               </select>
             </label>
             <label className="field">
-              <span>Deadline pengiriman</span>
+              <span>Delivery Deadline</span>
               <input
                 name="deliveryDeadline"
                 type="datetime-local"
@@ -276,7 +276,7 @@ export function CreateDealForm() {
               />
             </label>
             <label className="field">
-              <span>Wallet buyer</span>
+              <span>Buyer Wallet</span>
               <div className="flex items-center gap-2 w-full">
                 <input
                   name="buyer"
@@ -295,9 +295,9 @@ export function CreateDealForm() {
                       setBuyerLocked(false);
                     }}
                     className="text-xs text-red-600 hover:text-red-700 font-semibold cursor-pointer shrink-0 border border-red-200 hover:bg-red-50 px-2 py-1.5 rounded"
-                    title="Ubah alamat buyer"
+                    title="Change buyer address"
                   >
-                    Ubah
+                    Change
                   </button>
                 )}
               </div>
@@ -308,14 +308,13 @@ export function CreateDealForm() {
       <section className="form-section">
         <span className="form-section__number">03</span>
         <div className="form-section__body">
-          <h2>Aturan perlindungan</h2>
+          <h2>Protection & Timeout Rules</h2>
           <p>
-            Nilai awal cocok untuk {preset.label.toLowerCase()}, tetapi bisa
-            diubah.
+            Default settings are optimized for {preset.label.toLowerCase()} but fully customizable.
           </p>
           <div className="field-grid">
             <label className="field">
-              <span>Waktu review (jam)</span>
+              <span>Review Period (Hours)</span>
               <input
                 key={`${dealType}-review`}
                 name="reviewPeriodHours"
@@ -325,7 +324,7 @@ export function CreateDealForm() {
               />
             </label>
             <label className="field">
-              <span>Maksimal revisi</span>
+              <span>Revision Limit</span>
               <input
                 name="revisionLimit"
                 type="number"
@@ -336,7 +335,7 @@ export function CreateDealForm() {
               />
             </label>
             <label className="field">
-              <span>Waktu tiap revisi (jam)</span>
+              <span>Revision Window (Hours)</span>
               <input
                 key={`${dealType}-revision`}
                 name="revisionPeriodHours"
@@ -346,16 +345,15 @@ export function CreateDealForm() {
               />
             </label>
             <label className="field field--wide">
-              <span>Wallet resolver</span>
+              <span>Neutral Dispute Resolver</span>
               <input
                 name="resolver"
                 defaultValue={stellarConfig.defaultResolver}
-                placeholder="G… pihak netral"
+                placeholder="G… neutral arbitrator"
                 required
               />
               <small>
-                Resolver hanya dapat menentukan refund atau release ketika deal
-                disputed.
+                Resolver can only decide between release or refund if a dispute is formally opened.
               </small>
             </label>
           </div>
@@ -365,8 +363,8 @@ export function CreateDealForm() {
         <div>
           <ShieldCheck />
           <span>
-            <b>Seller menandatangani pembuatan deal</b>
-            <small>{wallet.address ?? "Wallet belum terhubung"}</small>
+            <b>Seller signs deal creation transaction</b>
+            <small>{wallet.address ?? "Wallet not connected"}</small>
           </span>
         </div>
         {error ? (
@@ -384,7 +382,7 @@ export function CreateDealForm() {
           type="submit"
           disabled={submitting}
         >
-          {submitting ? "Memproses…" : "Review & buat deal"}
+          {submitting ? "Processing…" : "Review & Deploy Deal"}
           <ArrowRight size={18} />
         </button>
       </div>

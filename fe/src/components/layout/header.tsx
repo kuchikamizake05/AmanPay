@@ -23,19 +23,19 @@ export function Header() {
       <div className="bg-[#116149]/90 text-white text-[11px] py-1 px-4 text-center font-medium flex items-center justify-center gap-1.5 shadow-xs">
         <Sparkles size={13} className="text-[#e8a62e]" />
         <span>
-          <strong>Demo Walkthrough:</strong> Gunakan panel <i>Simulator</i> di pojok kanan bawah untuk berganti peran Seller/Buyer secara instan.
+          <strong>Demo Walkthrough:</strong> Use the <i>Simulator</i> panel at the bottom-right to switch roles between Seller and Buyer instantly.
         </span>
       </div>
       <header className="site-header">
-        <Link href="/" className="brand" aria-label="AmanPay beranda">
+        <Link href="/" className="brand" aria-label="AmanPay Home">
           <span className="brand__mark">
             <ShieldCheck size={19} />
           </span>
           AmanPay
         </Link>
-        <nav aria-label="Navigasi utama">
-          <Link href="/dashboard">Deal saya</Link>
-          <Link href="/deals/new">Buat deal</Link>
+        <nav aria-label="Main navigation">
+          <Link href="/dashboard">My Deals</Link>
+          <Link href="/deals/new">Create Deal</Link>
         </nav>
         {wallet.address ? (
           <div className="flex items-center gap-2">
@@ -47,20 +47,20 @@ export function Header() {
             <button
               className="wallet-pill cursor-pointer flex items-center hover:bg-white/80 active:scale-95 transition-all"
               onClick={handleCopy}
-              title="Salin alamat wallet"
+              title="Copy wallet address"
             >
               <span 
                 className="wallet-pill__signal" 
                 style={{ backgroundColor: wallet.isSimulator ? "var(--amber)" : "#2aa779" }} 
               />
               <span>
-                {copied ? "Tersalin!" : short(wallet.address)}
+                {copied ? "Copied!" : short(wallet.address)}
               </span>
             </button>
             <button
               className="p-2 border border-neutral-200 hover:border-red-200 hover:bg-red-50 text-neutral-500 hover:text-red-600 rounded-full transition-all cursor-pointer flex items-center justify-center"
               onClick={wallet.disconnect}
-              title="Putuskan koneksi wallet"
+              title="Disconnect wallet"
             >
               <LogOut size={13} />
             </button>
@@ -72,7 +72,7 @@ export function Header() {
             disabled={wallet.connecting}
           >
             <Wallet size={16} />{" "}
-            {wallet.connecting ? "Membuka…" : "Hubungkan wallet"}
+            {wallet.connecting ? "Opening…" : "Connect Wallet"}
           </button>
         )}
       </header>

@@ -229,7 +229,7 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
       {loading && (
         <div className="action-loading">
           <LoaderCircle className="spin" />
-          <span>Memproses transaksi Stellar... Mohon tunggu konfirmasi wallet.</span>
+          <span>Processing Stellar transaction... Please wait for on-chain confirmation.</span>
         </div>
       )}
 
@@ -237,37 +237,37 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
         <div className="action-buttons">
           {availableActions.includes("fund") && (
             <button className="button button--primary" onClick={handleFund}>
-              Dapatkan Deal & Kunci Dana
+              Accept & Fund Escrow
             </button>
           )}
 
           {availableActions.includes("cancel") && (
             <button className="button button--dark" onClick={handleCancel}>
-              Batalkan Deal (Unfunded)
+              Cancel Deal (Unfunded)
             </button>
           )}
 
           {availableActions.includes("submit_delivery") && (
             <button className="button button--primary" onClick={() => setActiveForm("delivery")}>
-              Kirim Hasil Pekerjaan
+              Submit Credentials / Delivery Proof
             </button>
           )}
 
           {availableActions.includes("approve") && (
             <button className="button button--primary" onClick={handleApprove}>
-              Setujui & Lepaskan Dana
+              Approve & Release Funds
             </button>
           )}
 
           {availableActions.includes("request_revision") && (
             <button className="button button--dark" onClick={() => setActiveForm("revision")}>
-              Minta Revisi
+              Request Revision
             </button>
           )}
 
           {availableActions.includes("open_dispute") && (
             <button className="button button--dark" onClick={() => setActiveForm("dispute")}>
-              Ajukan Dispute
+              Open Dispute
             </button>
           )}
 
@@ -279,33 +279,33 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
             >
               {deal.cancelRequestedBy
                 ? deal.cancelRequestedBy === wallet.address
-                  ? "Menunggu Konfirmasi Batal Lawan"
-                  : "Setujui Pembatalan Bersama"
-                : "Ajukan Batal Bersama"}
+                  ? "Awaiting Counterparty Confirmation"
+                  : "Confirm Mutual Cancellation"
+                : "Request Mutual Cancellation"}
             </button>
           )}
 
           {availableActions.includes("refund_timeout") && (
             <button className="button button--primary" onClick={handleRefundTimeout}>
-              Klaim Refund (Timeout)
+              Claim Refund (Timeout)
             </button>
           )}
 
           {availableActions.includes("release_timeout") && (
             <button className="button button--primary" onClick={handleReleaseTimeout}>
-              Klaim Pelepasan Dana (Timeout)
+              Claim Release (Review Timeout)
             </button>
           )}
 
           {availableActions.includes("resolve_refund") && (
             <button className="button button--primary" onClick={handleResolveRefund}>
-              Putuskan: Refund Buyer
+              Resolve: Refund Buyer
             </button>
           )}
 
           {availableActions.includes("resolve_release") && (
             <button className="button button--primary" onClick={handleResolveRelease}>
-              Putuskan: Release Seller
+              Resolve: Release to Seller
             </button>
           )}
         </div>
@@ -314,23 +314,23 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
       {/* Forms */}
       {!loading && activeForm === "delivery" && (
         <form onSubmit={handleSubmitDelivery} className="action-form">
-          <h3>Kirim Hasil Pekerjaan</h3>
+          <h3>Submit Credentials / Delivery Proof</h3>
           <div className="form-group">
-            <label htmlFor="deliveryUrl">URL Hasil Pekerjaan (Private)</label>
+            <label htmlFor="deliveryUrl">Encrypted URL / Access Link (Private)</label>
             <input
               id="deliveryUrl"
               type="url"
-              placeholder="https://drive.google.com/... atau https://github.com/..."
+              placeholder="https://drive.google.com/... or https://github.com/..."
               value={deliveryUrl}
               onChange={(e) => setDeliveryUrl(e.target.value)}
               required
             />
           </div>
           <div className="form-group">
-            <label htmlFor="deliveryNote">Catatan Pengiriman (Private)</label>
+            <label htmlFor="deliveryNote">Transfer Notes & Account Instructions (Private)</label>
             <textarea
               id="deliveryNote"
-              placeholder="Jelaskan detail pengiriman hasil kerja..."
+              placeholder="Provide credentials, password reset instructions, or delivery details..."
               value={deliveryNote}
               onChange={(e) => setDeliveryNote(e.target.value)}
               required
@@ -338,10 +338,10 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
           </div>
           <div className="form-actions">
             <button type="submit" className="button button--primary">
-              Kirim Bukti
+              Submit Proof
             </button>
             <button type="button" className="button button--dark" onClick={() => setActiveForm(null)}>
-              Batal
+              Cancel
             </button>
           </div>
         </form>
@@ -349,19 +349,19 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
 
       {!loading && activeForm === "revision" && (
         <form onSubmit={handleSubmitRevision} className="action-form">
-          <h3>Minta Revisi Pekerjaan</h3>
+          <h3>Request Revision / Replacement</h3>
           <div className="form-group">
-            <label htmlFor="revisionReason">Alasan Revisi (Private)</label>
+            <label htmlFor="revisionReason">Reason for Revision (Private)</label>
             <textarea
               id="revisionReason"
-              placeholder="Jelaskan apa saja yang perlu direvisi..."
+              placeholder="Explain invalid login, missing files, or requested adjustments..."
               value={revisionReason}
               onChange={(e) => setRevisionReason(e.target.value)}
               required
             />
           </div>
           <div className="form-group">
-            <label htmlFor="revisionEvidence">URL Bukti Pendukung (Opsional)</label>
+            <label htmlFor="revisionEvidence">Supporting Evidence URL (Optional)</label>
             <input
               id="revisionEvidence"
               type="url"
@@ -372,10 +372,10 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
           </div>
           <div className="form-actions">
             <button type="submit" className="button button--primary">
-              Ajukan Revisi
+              Submit Revision Request
             </button>
             <button type="button" className="button button--dark" onClick={() => setActiveForm(null)}>
-              Batal
+              Cancel
             </button>
           </div>
         </form>
@@ -383,19 +383,19 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
 
       {!loading && activeForm === "dispute" && (
         <form onSubmit={handleSubmitDispute} className="action-form">
-          <h3>Buka Dispute (Sengketa)</h3>
+          <h3>Open Dispute (Arbitration)</h3>
           <div className="form-group">
-            <label htmlFor="disputeReason">Kronologi / Alasan Sengketa (Private)</label>
+            <label htmlFor="disputeReason">Dispute Chronology & Statement (Private)</label>
             <textarea
               id="disputeReason"
-              placeholder="Jelaskan permasalahan transaksi secara detail agar dipelajari Resolver..."
+              placeholder="Explain transaction breach for the neutral resolver to inspect..."
               value={disputeReason}
               onChange={(e) => setDisputeReason(e.target.value)}
               required
             />
           </div>
           <div className="form-group">
-            <label htmlFor="disputeEvidence">URL Bukti Pendukung (Opsional)</label>
+            <label htmlFor="disputeEvidence">Supporting Evidence URL (Optional)</label>
             <input
               id="disputeEvidence"
               type="url"
@@ -406,10 +406,10 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
           </div>
           <div className="form-actions">
             <button type="submit" className="button button--primary">
-              Ajukan Dispute
+              Submit Dispute
             </button>
             <button type="button" className="button button--dark" onClick={() => setActiveForm(null)}>
-              Batal
+              Cancel
             </button>
           </div>
         </form>

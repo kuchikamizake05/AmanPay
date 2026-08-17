@@ -115,9 +115,9 @@ export function ParserInput({ onApply }: ParserInputProps) {
           <Sparkles className="h-5 w-5 animate-pulse" />
         </div>
         <div>
-          <h3 className="font-bold text-lg text-[#17231e]">AI Deal Autofill</h3>
+          <h3 className="font-bold text-lg text-[#17231e]">AI Deal Intake & Autofill</h3>
           <p className="text-xs text-[#667068]">
-            Tempel chat atau kesepakatan informal Anda untuk mengisi form secara otomatis.
+            Paste informal chat terms or upload a screenshot (WhatsApp, Facebook Messenger, Discord) to autofill structured escrow parameters.
           </p>
         </div>
       </div>
@@ -144,7 +144,7 @@ export function ParserInput({ onApply }: ParserInputProps) {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Contoh: Bikin logo olshop, budget 200rb, kelar 3 hari, revisi max 3 kali, dikirim lewat email... (atau unggah tangkapan layar chat di bawah)"
+          placeholder="e.g.: Selling Valorant Radiant account, price 50 USDC, transfer credentials + original email within 24h, 2x revision limit... (or upload chat screenshot below)"
           rows={3}
           className="w-full text-sm border border-[#d8d2c3] bg-white/70 p-4 pr-12 rounded-lg outline-none focus:border-[#116149] focus:ring-2 focus:ring-[#116149]/10 text-[#17231e] placeholder:text-[#667068]/60 transition-all resize-none"
         />
@@ -154,7 +154,7 @@ export function ParserInput({ onApply }: ParserInputProps) {
             onClick={() => setText("")}
             className="absolute right-3 top-3 text-[#667068] hover:text-[#17231e] text-xs cursor-pointer"
           >
-            Hapus
+            Clear
           </button>
         )}
       </div>
@@ -174,13 +174,13 @@ export function ParserInput({ onApply }: ParserInputProps) {
           className="text-xs bg-white hover:bg-neutral-50 text-[#17231e] border border-[#d8d2c3] px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 font-medium shadow-2xs"
         >
           <ImagePlus size={14} className="text-[#116149]" />
-          Unggah Screenshot Chat
+          Upload Chat Screenshot
         </button>
 
         {imagePreview && (
           <div className="flex items-center gap-2 bg-[#116149]/10 border border-[#116149]/20 px-2.5 py-1 rounded-lg">
             <img src={imagePreview} alt="Chat screenshot" className="w-6 h-6 object-cover rounded" />
-            <span className="text-xs text-[#116149] font-medium">Screenshot terpasang</span>
+            <span className="text-xs text-[#116149] font-medium">Screenshot attached</span>
             <button
               type="button"
               onClick={clearImage}
@@ -210,12 +210,12 @@ export function ParserInput({ onApply }: ParserInputProps) {
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Menganalisis...
+              Analyzing...
             </>
           ) : (
             <>
               <Sparkles className="h-4 w-4" />
-              Analisis Kesepakatan
+              Analyze Deal
             </>
           )}
         </button>
@@ -226,7 +226,7 @@ export function ParserInput({ onApply }: ParserInputProps) {
         <div className="mt-6 border-t border-[#d8d2c3]/60 pt-5 animate-rise">
           <div className="flex justify-between items-center mb-3.5">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#667068] flex items-center gap-1.5">
-              Hasil Analisis ({source === "gemini" ? "✨ Gemini AI" : "⚙️ Local Regex"})
+              Extracted Parameters ({source === "gemini" ? "✨ Gemini AI" : "⚙️ Local Regex"})
             </h4>
             <button
               type="button"
@@ -240,19 +240,19 @@ export function ParserInput({ onApply }: ParserInputProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white/50 border border-[#d8d2c3]/50 p-4 rounded-lg text-sm mb-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-[#667068]">Tipe Kesepakatan</label>
+              <label className="text-[11px] font-bold text-[#667068]">Deal Type</label>
               <select
                 value={parsedData.dealType}
                 onChange={(e) => handleFieldChange("dealType", e.target.value)}
                 className="bg-white border border-[#d8d2c3] rounded px-2.5 py-1.5 outline-none focus:border-[#116149] text-[#17231e] font-medium"
               >
-                <option value="Service">Jasa digital (Service)</option>
-                <option value="DigitalGoods">Produk digital (DigitalGoods)</option>
+                <option value="Service">Digital Service / Commission</option>
+                <option value="DigitalGoods">Digital Goods / Account / License</option>
               </select>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-[#667068]">Judul Deal</label>
+              <label className="text-[11px] font-bold text-[#667068]">Deal Title</label>
               <input
                 type="text"
                 value={parsedData.title}
@@ -262,7 +262,7 @@ export function ParserInput({ onApply }: ParserInputProps) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-[#667068]">Nominal (Stroops/Unit)</label>
+              <label className="text-[11px] font-bold text-[#667068]">Amount (Stroops/Units)</label>
               <input
                 type="number"
                 value={parsedData.amount}
@@ -272,7 +272,7 @@ export function ParserInput({ onApply }: ParserInputProps) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-[#667068]">Deadline (Hari)</label>
+              <label className="text-[11px] font-bold text-[#667068]">Deadline (Days)</label>
               <input
                 type="number"
                 value={parsedData.deadlineDays}
@@ -282,7 +282,7 @@ export function ParserInput({ onApply }: ParserInputProps) {
             </div>
 
             <div className="flex flex-col gap-1.5 md:col-span-2">
-              <label className="text-[11px] font-bold text-[#667068]">Deliverables / Media Pengiriman</label>
+              <label className="text-[11px] font-bold text-[#667068]">Deliverables & Transfer Channel</label>
               <input
                 type="text"
                 value={parsedData.deliverable}
@@ -292,7 +292,7 @@ export function ParserInput({ onApply }: ParserInputProps) {
             </div>
 
             <div className="flex flex-col gap-1.5 col-span-1 md:col-span-2">
-              <label className="text-[11px] font-bold text-[#667068]">Maksimal Revisi</label>
+              <label className="text-[11px] font-bold text-[#667068]">Revision Limit</label>
               <input
                 type="number"
                 value={parsedData.revisionLimit}
@@ -310,11 +310,11 @@ export function ParserInput({ onApply }: ParserInputProps) {
             {applied ? (
               <>
                 <Check className="h-4 w-4 text-emerald-400" />
-                Telah Diterapkan ke Form!
+                Applied to Form!
               </>
             ) : (
               <>
-                Terapkan ke Form
+                Apply to Form
               </>
             )}
           </button>
