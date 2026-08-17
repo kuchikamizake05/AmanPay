@@ -252,61 +252,7 @@ export function ProfileView({ address }: { address: string }) {
       </div>
     </div>
   );
-                stellarConfig.assets.find((a) => a.contractId === deal.asset_address)?.code ?? "ASSET";
-
-              return (
-                <div
-                  key={deal.contract_deal_id}
-                  className="bg-white/50 hover:bg-white/80 border border-[#d8d2c3] rounded-xl p-5 shadow-sm transition-all hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-[#116149]/10 text-[#116149] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-                        {deal.deal_type}
-                      </span>
-                      <small className="text-xs text-[#667068] font-mono">
-                        DEAL #{deal.contract_deal_id}
-                      </small>
-                    </div>
-                    <h3 className="font-bold text-base text-[#17231e] mt-1.5">
-                      {deal.title}
-                    </h3>
-                    <p className="text-xs text-[#667068] mt-1 flex flex-wrap gap-x-3 gap-y-1">
-                      <span>
-                        Lawan transaksi:{" "}
-                        <Link href={`/profiles/${counterparty}`} className="underline hover:text-[#116149]">
-                          {short(counterparty)}
-                        </Link>{" "}
-                        ({isSeller ? "Sebagai Seller" : "Sebagai Buyer"})
-                      </span>
-                      <span>•</span>
-                      <span>
-                        Selesai:{" "}
-                        {new Date(deal.created_at).toLocaleDateString("id-ID", {
-                          dateStyle: "medium",
-                        })}
-                      </span>
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-3 md:pt-0 border-[#d8d2c3]/60">
-                    <div className="text-left md:text-right">
-                      <span className="text-xs text-[#667068] block">Volume</span>
-                      <strong className="text-lg font-extrabold text-[#116149]">
-                        {dealAmount.toLocaleString("id-ID", { maximumFractionDigits: 7 })}{" "}
-                        <span className="text-xs">{assetCode}</span>
-                      </strong>
-                    </div>
-                    <Link
-                      href={`/deals/${deal.contract_deal_id}/receipt`}
-                      className="button button--dark button--small py-2 px-4 text-xs select-none cursor-pointer flex items-center gap-1.5"
-                    >
-                      Buka Resi <ArrowUpRight size={14} />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
+}
           </div>
         )}
       </div>

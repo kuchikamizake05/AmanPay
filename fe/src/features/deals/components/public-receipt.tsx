@@ -123,19 +123,6 @@ export function PublicReceipt({ id }: { id: string }) {
         dateStyle: "medium",
         timeStyle: "short",
       });
-  const assetCode =
-    stellarConfig.assets.find((asset) => asset.contractId === chain.asset)?.code ?? "ASSET";
-
-  // Timeline events for completed date
-  const completeEvent = payload.timeline.find(
-    (ev) => ev.resulting_status === "Released" || ev.resulting_status === "Refunded"
-  );
-  const completedDate = completeEvent
-    ? new Date(completeEvent.created_at).toLocaleString("id-ID", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      })
-    : new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const shareText = formatShareMessage(
