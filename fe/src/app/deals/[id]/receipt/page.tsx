@@ -11,8 +11,8 @@ export async function generateMetadata({
     title: `Official Settlement Receipt #${id} — AmanPay`,
     description: `Verifiable on-chain settlement receipt backed by Stellar Soroban smart contract.`,
     openGraph: {
-      title: `Resi Resmi Transaksi Rekber #${id} — AmanPay`,
-      description: `Bukti penyelesaian transaksi digital terverifikasi di blockchain Stellar.`,
+      title: `Official Settlement Receipt #${id} — AmanPay`,
+      description: `Verifiable on-chain settlement receipt backed by Stellar Soroban smart contract.`,
       type: "website",
     },
   };

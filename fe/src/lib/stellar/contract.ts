@@ -104,24 +104,24 @@ function parseContractError(errorStr: string): Error {
   if (match) {
     const code = parseInt(match[1], 10);
     switch (code) {
-      case 1: return new Error("Asset tidak diaktifkan pada kontrak");
-      case 2: return new Error("Nominal tidak valid (harus > 0)");
-      case 3: return new Error("Batas waktu pengiriman tidak valid (harus di masa depan)");
-      case 4: return new Error("Periode review atau periode revisi tidak valid");
-      case 5: return new Error("Pihak-pihak deal tidak valid");
-      case 6: return new Error("Resolver tidak valid");
-      case 7: return new Error("Deal tidak ditemukan");
-      case 8: return new Error("Status deal saat ini tidak memperbolehkan aksi ini");
-      case 9: return new Error("Batas waktu pengiriman belum terlewati");
-      case 10: return new Error("Batas waktu review belum terlewati");
-      case 11: return new Error("Batas jumlah revisi sudah tercapai");
-      case 12: return new Error("Anda bukan pihak yang berwenang untuk aksi ini");
-      case 13: return new Error("Kesalahan aritmatika pada kontrak");
-      case 14: return new Error("Batas waktu pengiriman sudah terlewati");
-      case 15: return new Error("Batas waktu review sudah terlewati");
+      case 1: return new Error("Asset is not enabled on this contract");
+      case 2: return new Error("Invalid amount (must be > 0)");
+      case 3: return new Error("Invalid delivery deadline (must be in future)");
+      case 4: return new Error("Invalid review or revision period");
+      case 5: return new Error("Invalid deal counterparties");
+      case 6: return new Error("Invalid resolver address");
+      case 7: return new Error("Escrow deal not found");
+      case 8: return new Error("Current deal state does not allow this action");
+      case 9: return new Error("Delivery deadline has not been reached yet");
+      case 10: return new Error("Review window has not elapsed yet");
+      case 11: return new Error("Revision limit reached");
+      case 12: return new Error("Unauthorized: your wallet is not a permitted party");
+      case 13: return new Error("Contract arithmetic overflow error");
+      case 14: return new Error("Delivery deadline has already passed");
+      case 15: return new Error("Review window has already expired");
     }
   }
-  return new Error(`Simulasi gagal: ${errorStr}`);
+  return new Error(`Simulation error: ${errorStr}`);
 }
 
 export async function invokeDealAction(

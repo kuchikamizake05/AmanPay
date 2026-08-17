@@ -4,15 +4,15 @@ import { Providers } from "./providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AmanPay — Deal jelas, dana aman",
-  description: "Rekber programmable untuk transaksi digital dari chat.",
+  title: "AmanPay — Non-Custodial Escrow & Deal OS",
+  description: "Programmable smart contract escrow for informal digital commerce and chat deals on Stellar Soroban.",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="id">
+    <html lang="en">
       <body>
         <Providers>
           <Header />

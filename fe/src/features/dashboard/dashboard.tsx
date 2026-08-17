@@ -26,7 +26,7 @@ export function Dashboard() {
     if (!wallet.address) return;
     const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
     const shareUrl = `${origin}/deals/new?buyer=${wallet.address}`;
-    const shareMessage = `Halo, ini alamat/link wallet AmanPay saya untuk transaksi kita:\n${shareUrl}`;
+    const shareMessage = `Hi, here is my verified AmanPay wallet link to initialize our escrow deal:\n${shareUrl}`;
     
     void navigator.clipboard.writeText(shareMessage);
     setCopied(true);

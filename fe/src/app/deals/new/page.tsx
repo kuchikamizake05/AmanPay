@@ -4,13 +4,13 @@ export default function NewDealPage() {
   return (
     <main className="shell app-page">
       <div className="page-heading">
-        <p className="eyebrow">Deal baru</p>
+        <p className="eyebrow">New Escrow Deal</p>
         <h1>
-          Susun kesepakatan
+          Draft transparent terms
           <br />
-          <em>yang sama-sama jelas.</em>
+          <em>enforced by smart contract.</em>
         </h1>
-        <p>Buyer akan melihat terms yang sama sebelum mengunci dana.</p>
+        <p>Both buyer and seller verify identical cryptographic terms before funds are locked.</p>
       </div>
       <CreateDealForm />
     </main>

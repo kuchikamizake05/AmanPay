@@ -11,8 +11,8 @@ export async function generateMetadata({
     title: `AmanPay Deal #${id} — Verified Escrow`,
     description: `Track and verify Soroban smart contract escrow terms for Deal #${id} on Stellar Testnet.`,
     openGraph: {
-      title: `AmanPay Deal #${id} — Escrow Terverifikasi`,
-      description: `Transaksi rekber smart contract aman tanpa perantara manusia di Stellar Soroban.`,
+      title: `AmanPay Deal #${id} — Verified Escrow`,
+      description: `Trustless smart contract escrow without human middleman on Stellar Soroban.`,
       type: "website",
     },
   };

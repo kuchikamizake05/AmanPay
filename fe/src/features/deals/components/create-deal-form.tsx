@@ -28,22 +28,22 @@ const presets: Record<
   }
 > = {
   Service: {
-    label: "Jasa digital",
-    hint: "Freelance, desain, development",
+    label: "Digital Service",
+    hint: "Freelancing, design, programming",
     review: 48,
     revisions: 2,
     revisionHours: 48,
   },
   DigitalGoods: {
-    label: "Produk digital",
-    hint: "Template, file, lisensi",
+    label: "Digital Goods",
+    hint: "Game accounts, keys, licenses, templates",
     review: 24,
     revisions: 0,
     revisionHours: 0,
   },
   Custom: {
-    label: "Deal lainnya",
-    hint: "Transaksi digital fleksibel",
+    label: "Custom Agreement",
+    hint: "Flexible custom trade terms",
     review: 48,
     revisions: 0,
     revisionHours: 0,
@@ -128,10 +128,10 @@ export function CreateDealForm() {
     const parsed = dealInputSchema.safeParse(candidate);
     if (!parsed.success)
       return setError(
-        parsed.error.issues[0]?.message ?? "Periksa kembali detail deal",
+        parsed.error.issues[0]?.message ?? "Please review deal parameters",
       );
     if (!stellarConfig.contractId)
-      return setError("Contract ID belum dikonfigurasi di .env.local");
+      return setError("Contract ID not configured in .env.local");
 
     setSubmitting(true);
     try {
@@ -141,13 +141,13 @@ export function CreateDealForm() {
         network: "testnet",
       });
       const termsHash = await hashTerms(asCanonicalValue(metadata));
-      setStatus("Menyiapkan transaksi aman…");
+      setStatus("Preparing secure transaction…");
       const result = await createContractDeal(
         input,
         termsHash,
         wallet.signTransaction,
       );
-      setStatus("Mencatat detail deal…");
+      setStatus("Registering off-chain deal transcript…");
       const response = await fetch("/api/deals/register", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -171,7 +171,7 @@ export function CreateDealForm() {
       }
       router.push(`/deals/${result.dealId}`);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Deal gagal dibuat");
+      setError(cause instanceof Error ? cause.message : "Failed to create escrow deal");
     } finally {
       setSubmitting(false);
       setStatus(null);
