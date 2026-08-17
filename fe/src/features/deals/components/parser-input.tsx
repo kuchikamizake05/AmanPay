@@ -21,12 +21,16 @@ export function ParserInput({ onApply }: ParserInputProps) {
 
   const templates = [
     {
-      label: "🎨 Jasa Web Design (Service)",
-      text: "Bikin landing page 3 section, deadline 5 hari, harga 500 ribu, revisi maksimal 2x, final file dikirim via GitHub.",
+      label: "🎮 Game Account / In-Game Items (FB Group)",
+      text: "WTB Akun Mobile Legends Mythic Glory full skin epic limit, harga 50 USDC (800rb). Seller wajib serahkan data montoon + email pertama dalam 1 hari.",
     },
     {
-      label: "📦 Notion Template (Digital Goods)",
-      text: "Aku mau beli template Notion finance tracker harga 150 ribu. Seller kirim link Google Drive setelah aku bayar.",
+      label: "🔑 Premium Software Access & Licenses",
+      text: "Jual akses Canva Pro & ChatGPT Plus private setahun seharga 25 USDC. Garansi replace 30 hari, link invite dikirim langsung setelah buyer fund escrow.",
+    },
+    {
+      label: "🎨 Freelance & Digital Goods (Commission)",
+      text: "Bikin landing page 3 section mobile responsive, budget 100 USDC, deadline 5 hari, revisi maksimal 2x, final source code via GitHub repo.",
     },
   ];
 
