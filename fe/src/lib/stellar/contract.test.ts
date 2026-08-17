@@ -57,6 +57,7 @@ describe("AmanPay contract decoding", () => {
     reviewPeriodSeconds: 30,
     revisionLimit: 2,
     revisionCount: 0,
+    cancelRequestedBy: null,
     createdAt: 1,
   };
 
@@ -76,6 +77,7 @@ describe("AmanPay contract decoding", () => {
         review_period: 30n,
         revision_limit: 2,
         revision_count: 0,
+        cancel_requested_by: null,
         created_at: 1n,
       }),
     ).toMatchObject({

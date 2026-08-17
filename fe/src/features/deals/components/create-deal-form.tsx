@@ -13,7 +13,7 @@ import { useWallet } from "@/features/wallet/wallet-provider";
 import { createContractDeal } from "@/lib/stellar/contract";
 import { dealInputSchema, type DealInput, type DealType } from "../model/deal";
 import { asCanonicalValue, buildCanonicalTerms } from "../model/metadata";
-import { hashTerms } from "../model/terms";
+import { hashTerms, estimateIdrValue } from "../model/terms";
 import { ParserInput } from "./parser-input";
 import { type ParsedDeal } from "../model/parser";
 
@@ -235,12 +235,19 @@ export function CreateDealForm() {
               />
             </label>
             <label className="field">
-              <span>Nominal</span>
+              <div className="flex justify-between items-center">
+                <span>Nominal</span>
+                {amount && parseFloat(amount) > 0 ? (
+                  <span className="text-[11px] text-emerald-600 font-medium font-sans">
+                    ≈ {estimateIdrValue(amount, "USDC")}
+                  </span>
+                ) : null}
+              </div>
               <div className="input-affix">
                 <input
                   name="amount"
                   inputMode="decimal"
-                  placeholder="500000"
+                  placeholder="50"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   required

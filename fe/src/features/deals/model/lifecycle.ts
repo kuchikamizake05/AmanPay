@@ -7,6 +7,7 @@ export type DealAction =
   | "approve"
   | "request_revision"
   | "open_dispute"
+  | "mutual_cancel"
   | "refund_timeout"
   | "release_timeout"
   | "resolve_refund"
@@ -28,9 +29,13 @@ export function getAvailableActions(
 
   if (deal.status === "Funded" || deal.status === "RevisionRequested") {
     if (now > deal.deliveryDeadline) return ["refund_timeout"];
-    if (wallet === deal.seller) return ["submit_delivery", "open_dispute"];
-    if (wallet === deal.buyer) return ["open_dispute"];
-    return [];
+    const actions: DealAction[] = [];
+    if (wallet === deal.seller) {
+      actions.push("submit_delivery", "open_dispute", "mutual_cancel");
+    } else if (wallet === deal.buyer) {
+      actions.push("open_dispute", "mutual_cancel");
+    }
+    return actions;
   }
 
   if (deal.status === "Delivered") {
@@ -38,10 +43,10 @@ export function getAvailableActions(
     if (wallet === deal.buyer) {
       const actions: DealAction[] = ["approve"];
       if (deal.revisionCount < deal.revisionLimit) actions.push("request_revision");
-      actions.push("open_dispute");
+      actions.push("open_dispute", "mutual_cancel");
       return actions;
     }
-    if (wallet === deal.seller) return ["open_dispute"];
+    if (wallet === deal.seller) return ["open_dispute", "mutual_cancel"];
     return [];
   }
 

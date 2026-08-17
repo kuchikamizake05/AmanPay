@@ -560,3 +560,58 @@ fn lifecycle_emits_events() {
     // The latest top-level invocation contains the token transfer and AmanPay release event.
     assert_eq!(f.env.events().all().events().len(), 2);
 }
+
+#[test]
+fn mutual_cancel_requires_both_parties() {
+    let f = Fixture::new();
+    let id = f.create_deal();
+    f.fund(id);
+
+    // Outsider cannot request mutual cancel
+    assert_eq!(
+        f.client().try_request_or_confirm_mutual_cancel(&id, &f.outsider),
+        Err(Ok(ContractError::InvalidParty))
+    );
+
+    // Buyer initiates mutual cancel request
+    let first_res = f.client().request_or_confirm_mutual_cancel(&id, &f.buyer);
+    assert!(!first_res);
+    let deal = f.client().get_deal(&id);
+    assert_eq!(deal.status, DealStatus::Funded);
+    assert_eq!(deal.cancel_requested_by, Some(f.buyer.clone()));
+
+    // Repeating by same caller does nothing
+    let repeat_res = f.client().request_or_confirm_mutual_cancel(&id, &f.buyer);
+    assert!(!repeat_res);
+
+    // Seller confirms mutual cancel -> triggers full refund to buyer
+    let second_res = f.client().request_or_confirm_mutual_cancel(&id, &f.seller);
+    assert!(second_res);
+
+    let final_deal = f.client().get_deal(&id);
+    assert_eq!(final_deal.status, DealStatus::Refunded);
+    assert_eq!(f.token_client(&f.token).balance(&f.buyer), INITIAL_BALANCE);
+    assert_eq!(f.token_client(&f.token).balance(&f.contract_id), 0);
+}
+
+#[test]
+fn fee_deduction_splits_released_amount_correctly() {
+    let f = Fixture::new();
+    let fee_collector = Address::generate(&f.env);
+
+    // 100 bps = 1% fee
+    f.client().set_fee_config(&100u32, &fee_collector);
+    assert_eq!(f.client().get_fee_bps(), 100);
+
+    let id = f.create_deal();
+    f.fund(id);
+    f.deliver(id);
+    f.client().approve_release(&id);
+
+    let fee_amount = (DEAL_AMOUNT * 100) / 10_000; // 1_000
+    let seller_amount = DEAL_AMOUNT - fee_amount;  // 99_000
+
+    assert_eq!(f.token_client(&f.token).balance(&fee_collector), fee_amount);
+    assert_eq!(f.token_client(&f.token).balance(&f.seller), seller_amount);
+    assert_eq!(f.token_client(&f.token).balance(&f.contract_id), 0);
+}

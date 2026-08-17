@@ -51,3 +51,20 @@ export async function hashTerms(value: CanonicalValue): Promise<string> {
     byte.toString(16).padStart(2, "0"),
   ).join("");
 }
+
+export const ESTIMATED_RATES_IDR: Record<string, number> = {
+  USDC: 16_300,
+  XLM: 1_850,
+};
+
+export function estimateIdrValue(amountStr: string, assetSymbol = "USDC"): string {
+  const num = parseFloat(amountStr);
+  if (isNaN(num) || num <= 0) return "Rp 0";
+  const rate = ESTIMATED_RATES_IDR[assetSymbol.toUpperCase()] ?? 16_300;
+  const totalIdr = Math.round(num * rate);
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(totalIdr);
+}

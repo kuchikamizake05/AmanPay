@@ -211,6 +211,10 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
     }
   }
 
+  async function handleMutualCancel() {
+    await executeAction("mutual_cancel", { opener: wallet.address! });
+  }
+
   return (
     <div className="action-card">
       <h2>Aksi Escrow</h2>
@@ -264,6 +268,20 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
           {availableActions.includes("open_dispute") && (
             <button className="button button--dark" onClick={() => setActiveForm("dispute")}>
               Ajukan Dispute
+            </button>
+          )}
+
+          {availableActions.includes("mutual_cancel") && (
+            <button
+              className="button button--dark"
+              style={{ borderColor: "rgba(239, 68, 68, 0.4)", color: "#f87171" }}
+              onClick={handleMutualCancel}
+            >
+              {deal.cancelRequestedBy
+                ? deal.cancelRequestedBy === wallet.address
+                  ? "Menunggu Konfirmasi Batal Lawan"
+                  : "Setujui Pembatalan Bersama"
+                : "Ajukan Batal Bersama"}
             </button>
           )}
 

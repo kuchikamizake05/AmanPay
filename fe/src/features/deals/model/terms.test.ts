@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canonicalizeTerms, hashTerms, parseAmountToStroops } from "./terms";
+import { canonicalizeTerms, hashTerms, parseAmountToStroops, estimateIdrValue } from "./terms";
 
 describe("deal terms", () => {
   it("converts seven-decimal asset amounts without floating-point math", () => {
@@ -34,5 +34,11 @@ describe("deal terms", () => {
     ).resolves.toBe(
       "5437719d8fe17e4961f1e684b9fe59f7ad9896c14bc18332f2eff7245e11ce6d",
     );
+  });
+
+  it("calculates estimated IDR value for assets", () => {
+    expect(estimateIdrValue("50", "USDC")).toContain("815.000");
+    expect(estimateIdrValue("0", "USDC")).toBe("Rp 0");
+    expect(estimateIdrValue("invalid", "USDC")).toBe("Rp 0");
   });
 });

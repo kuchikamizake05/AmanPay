@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Sparkles, Loader2, Check, AlertCircle, RefreshCw } from "lucide-react";
+import { useState, useRef } from "react";
+import { Sparkles, Loader2, Check, AlertCircle, RefreshCw, ImagePlus, X } from "lucide-react";
 import { type ParsedDeal } from "../model/parser";
 
 interface ParserInputProps {
@@ -10,11 +10,14 @@ interface ParserInputProps {
 
 export function ParserInput({ onApply }: ParserInputProps) {
   const [text, setText] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<{ base64: string; mimeType: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<ParsedDeal | null>(null);
   const [source, setSource] = useState<string | null>(null);
   const [applied, setApplied] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const templates = [
     {
@@ -27,8 +30,30 @@ export function ParserInput({ onApply }: ParserInputProps) {
     },
   ];
 
+  function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("Hanya file gambar (PNG, JPG, WebP) yang didukung.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setImagePreview(base64);
+      setImageFile({ base64, mimeType: file.type });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearImage() {
+    setImagePreview(null);
+    setImageFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
   async function handleParse(inputText: string) {
-    if (!inputText.trim()) return;
+    if (!inputText.trim() && !imageFile) return;
     setLoading(true);
     setError(null);
     setParsedData(null);
@@ -38,11 +63,16 @@ export function ParserInput({ onApply }: ParserInputProps) {
       const res = await fetch("/api/deals/parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: inputText }),
+        body: JSON.stringify({
+          text: inputText,
+          imageBase64: imageFile?.base64,
+          mimeType: imageFile?.mimeType,
+        }),
       });
 
       if (!res.ok) {
-        throw new Error("Gagal menganalisis teks");
+        const errData = await res.json();
+        throw new Error(errData.error || "Gagal menganalisis data");
       }
 
       const result = await res.json();
@@ -50,7 +80,7 @@ export function ParserInput({ onApply }: ParserInputProps) {
         setParsedData(result.data);
         setSource(result.source);
       } else {
-        throw new Error(result.error || "Gagal menganalisis teks");
+        throw new Error(result.error || "Gagal menganalisis data");
       }
     } catch (err: any) {
       setError(err.message || "Terjadi kesalahan koneksi.");
@@ -105,12 +135,12 @@ export function ParserInput({ onApply }: ParserInputProps) {
         ))}
       </div>
 
-      {/* Input Textarea */}
+      {/* Input Textarea & Screenshot Upload */}
       <div className="relative mb-4">
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Contoh: Bikin logo olshop, budget 200rb, kelar 3 hari, revisi max 3 kali, dikirim lewat email..."
+          placeholder="Contoh: Bikin logo olshop, budget 200rb, kelar 3 hari, revisi max 3 kali, dikirim lewat email... (atau unggah tangkapan layar chat di bawah)"
           rows={3}
           className="w-full text-sm border border-[#d8d2c3] bg-white/70 p-4 pr-12 rounded-lg outline-none focus:border-[#116149] focus:ring-2 focus:ring-[#116149]/10 text-[#17231e] placeholder:text-[#667068]/60 transition-all resize-none"
         />
@@ -122,6 +152,39 @@ export function ParserInput({ onApply }: ParserInputProps) {
           >
             Hapus
           </button>
+        )}
+      </div>
+
+      {/* Image Preview & Upload Controls */}
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleImageUpload}
+          accept="image/*"
+          className="hidden"
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="text-xs bg-white hover:bg-neutral-50 text-[#17231e] border border-[#d8d2c3] px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 font-medium shadow-2xs"
+        >
+          <ImagePlus size={14} className="text-[#116149]" />
+          Unggah Screenshot Chat
+        </button>
+
+        {imagePreview && (
+          <div className="flex items-center gap-2 bg-[#116149]/10 border border-[#116149]/20 px-2.5 py-1 rounded-lg">
+            <img src={imagePreview} alt="Chat screenshot" className="w-6 h-6 object-cover rounded" />
+            <span className="text-xs text-[#116149] font-medium">Screenshot terpasang</span>
+            <button
+              type="button"
+              onClick={clearImage}
+              className="text-[#667068] hover:text-red-500 cursor-pointer ml-1"
+            >
+              <X size={13} />
+            </button>
+          </div>
         )}
       </div>
 
@@ -137,7 +200,7 @@ export function ParserInput({ onApply }: ParserInputProps) {
         <button
           type="button"
           onClick={() => handleParse(text)}
-          disabled={loading || !text.trim()}
+          disabled={loading || (!text.trim() && !imageFile)}
           className="button button--primary button--small select-none cursor-pointer flex items-center gap-2 disabled:opacity-55"
         >
           {loading ? (

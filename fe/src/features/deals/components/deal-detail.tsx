@@ -9,10 +9,12 @@ import {
   LoaderCircle,
   ShieldCheck,
   ShieldAlert,
+  Share2,
 } from "lucide-react";
 import type { ChainDeal } from "@/lib/stellar/codec";
 import { stellarConfig } from "@/config/stellar";
 import type { CanonicalDealTerms } from "../model/metadata";
+import { estimateIdrValue } from "../model/terms";
 import { DealStatusBadge } from "./deal-status";
 import { ActionPanel } from "./action-panel";
 import { Timeline } from "./timeline";
@@ -40,14 +42,32 @@ export function DealDetail({ id }: { id: string }) {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    fetch(`/api/deals/${id}`)
-      .then(async (response) => {
+    let isMounted = true;
+
+    async function loadData() {
+      try {
+        const response = await fetch(`/api/deals/${id}`);
         const data = await response.json();
         if (!response.ok) throw new Error(data.error);
-        return data;
-      })
-      .then(setPayload)
-      .catch((cause) => setError(cause.message));
+        if (isMounted) {
+          setPayload(data);
+        }
+      } catch (cause: any) {
+        if (isMounted) setError(cause.message);
+      }
+    }
+
+    loadData();
+
+    // Auto-polling every 6 seconds if deal is in active non-terminal state
+    const interval = setInterval(() => {
+      loadData();
+    }, 6_000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [id, refreshKey]);
 
   const refetch = () => setRefreshKey((k) => k + 1);
@@ -269,8 +289,14 @@ export function DealDetail({ id }: { id: string }) {
           <span>
             {stellarConfig.assets.find(
               (asset) => asset.contractId === chain.asset,
-            )?.code ?? "ASSET"}
+            )?.code ?? "USDC"}
           </span>
+          <p className="text-xs text-emerald-600 font-semibold mt-1">
+            ≈ {estimateIdrValue(
+              (Number(chain.amountStroops) / 10_000_000).toString(),
+              stellarConfig.assets.find((asset) => asset.contractId === chain.asset)?.code ?? "USDC"
+            )}
+          </p>
           <hr />
           <dl>
             <dt>Deadline</dt>
@@ -287,6 +313,18 @@ export function DealDetail({ id }: { id: string }) {
               {chain.revisionCount} / {chain.revisionLimit}
             </dd>
           </dl>
+
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(
+              `Halo, update status AmanPay Escrow Deal #${chain.id} (${metadata?.title ?? "Digital Deal"}): Status saat ini *${chain.status}*. Cek di: ${typeof window !== "undefined" ? window.location.href : ""}`
+            )}`}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 mt-4 text-xs font-semibold rounded bg-[#25D366]/10 text-[#128C7E] hover:bg-[#25D366]/20 transition-all border border-[#25D366]/30 cursor-pointer"
+          >
+            <Share2 size={13} /> Update via WhatsApp
+          </a>
+
           <p className="summary-note">
             <ShieldCheck size={16} /> Dana tidak disimpan AmanPay.
           </p>

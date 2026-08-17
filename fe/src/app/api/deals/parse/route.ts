@@ -3,16 +3,41 @@ import { parseTextWithRegex } from "@/features/deals/model/parser";
 
 export async function POST(request: Request) {
   try {
-    const { text } = await request.json();
-    if (!text || typeof text !== "string") {
-      return NextResponse.json({ error: "Teks tidak valid" }, { status: 400 });
+    const body = await request.json();
+    const { text, imageBase64, mimeType } = body;
+
+    if (!text && !imageBase64) {
+      return NextResponse.json({ error: "Teks atau gambar tidak boleh kosong" }, { status: 400 });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      // Fallback to regex
-      const parsed = parseTextWithRegex(text);
-      return NextResponse.json({ success: true, data: parsed, source: "regex" });
+      if (text) {
+        const parsed = parseTextWithRegex(text);
+        return NextResponse.json({ success: true, data: parsed, source: "regex" });
+      }
+      return NextResponse.json(
+        { error: "GEMINI_API_KEY diperlukan untuk menganalisis gambar screenshot" },
+        { status: 400 },
+      );
+    }
+
+    // Prepare parts
+    const userParts: any[] = [];
+    if (imageBase64) {
+      userParts.push({
+        inlineData: {
+          mimeType: mimeType || "image/png",
+          data: imageBase64.replace(/^data:image\/\w+;base64,/, ""),
+        },
+      });
+      userParts.push({
+        text: `Analyze this chat screenshot (WhatsApp/Telegram/Discord) and extract structured deal parameters. If additional text is provided: "${text || ""}"`,
+      });
+    } else {
+      userParts.push({
+        text: `Analyze this deal chat/text and extract the parameters: "${text}"`,
+      });
     }
 
     // Call Gemini REST API
@@ -28,18 +53,14 @@ export async function POST(request: Request) {
             systemInstruction: {
               parts: [
                 {
-                  text: "You are a professional transaction assistant. Analyze informal deal or chat text in Indonesian (and slang) and extract structured escrow deal details.",
+                  text: "You are a professional transaction assistant. Analyze informal deal or chat text/screenshot in Indonesian (and slang) and extract structured escrow deal details.",
                 },
               ],
             },
             contents: [
               {
                 role: "user",
-                parts: [
-                  {
-                    text: `Analyze this deal chat/text and extract the parameters: "${text}"`,
-                  },
-                ],
+                parts: userParts,
               },
             ],
             generationConfig: {
@@ -68,7 +89,7 @@ export async function POST(request: Request) {
               },
             },
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -97,8 +118,11 @@ export async function POST(request: Request) {
       });
     } catch (apiError) {
       console.error("Gemini parse failed, falling back to regex:", apiError);
-      const parsed = parseTextWithRegex(text);
-      return NextResponse.json({ success: true, data: parsed, source: "regex" });
+      if (text) {
+        const parsed = parseTextWithRegex(text);
+        return NextResponse.json({ success: true, data: parsed, source: "regex" });
+      }
+      throw apiError;
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -11,6 +11,8 @@ const DEAL_TTL_EXTEND_TO: u32 = 518_400;
 pub(crate) enum DataKey {
     Admin,
     NextDealId,
+    FeeBps,
+    FeeRecipient,
     AssetEnabled(Address),
     Deal(u64),
 }

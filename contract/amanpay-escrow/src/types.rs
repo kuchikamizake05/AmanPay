@@ -48,6 +48,7 @@ pub struct Deal {
     pub revision_period: u64,
     pub revision_count: u32,
     pub status: DealStatus,
+    pub cancel_requested_by: Option<Address>,
     pub created_at: u64,
     pub funded_at: Option<u64>,
     pub delivered_at: Option<u64>,

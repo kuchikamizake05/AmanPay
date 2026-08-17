@@ -71,6 +71,7 @@ export type ChainDeal = {
   reviewPeriodSeconds: number;
   revisionLimit: number;
   revisionCount: number;
+  cancelRequestedBy: string | null;
   createdAt: number;
 };
 
@@ -94,6 +95,7 @@ export function normalizeChainDeal(value: Record<string, unknown>): ChainDeal {
     reviewPeriodSeconds: Number(value.review_period),
     revisionLimit: Number(value.revision_limit),
     revisionCount: Number(value.revision_count),
+    cancelRequestedBy: value.cancel_requested_by ? String(value.cancel_requested_by) : null,
     createdAt: Number(value.created_at),
   };
 }

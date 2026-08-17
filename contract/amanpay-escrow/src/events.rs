@@ -85,3 +85,19 @@ pub struct DealCancelled {
     pub deal_id: u64,
     pub seller: Address,
 }
+
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct MutualCancelRequested {
+    #[topic]
+    pub deal_id: u64,
+    pub requested_by: Address,
+}
+
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct MutualCancelCompleted {
+    #[topic]
+    pub deal_id: u64,
+    pub amount: i128,
+}

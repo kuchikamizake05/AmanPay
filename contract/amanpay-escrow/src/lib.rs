@@ -20,12 +20,35 @@ fn token_transfer(env: &Env, asset: &Address, from: &Address, to: &Address, amou
 }
 
 fn release_to_seller(env: &Env, deal: &mut Deal) {
+    let fee_bps: u32 = env.storage().instance().get(&DataKey::FeeBps).unwrap_or(0);
+    let fee_recipient: Option<Address> = env.storage().instance().get(&DataKey::FeeRecipient);
+
+    let fee_amount = if fee_bps > 0 && fee_recipient.is_some() {
+        (deal.amount * (fee_bps as i128)) / 10_000
+    } else {
+        0
+    };
+
+    let seller_amount = deal.amount - fee_amount;
+
+    if fee_amount > 0 {
+        if let Some(ref recipient) = fee_recipient {
+            token_transfer(
+                env,
+                &deal.asset,
+                &env.current_contract_address(),
+                recipient,
+                fee_amount,
+            );
+        }
+    }
+
     token_transfer(
         env,
         &deal.asset,
         &env.current_contract_address(),
         &deal.seller,
-        deal.amount,
+        seller_amount,
     );
     deal.status = DealStatus::Released;
     deal.closed_at = Some(env.ledger().timestamp());
@@ -73,6 +96,25 @@ impl AmanPayEscrow {
             .instance()
             .get(&DataKey::AssetEnabled(asset))
             .unwrap_or(false)
+    }
+
+    pub fn set_fee_config(env: Env, fee_bps: u32, recipient: Address) -> Result<(), ContractError> {
+        let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
+        admin.require_auth();
+
+        if fee_bps > 1_000 {
+            return Err(ContractError::ArithmeticOverflow);
+        }
+
+        env.storage().instance().set(&DataKey::FeeBps, &fee_bps);
+        env.storage().instance().set(&DataKey::FeeRecipient, &recipient);
+        extend_instance_ttl(&env);
+        Ok(())
+    }
+
+    pub fn get_fee_bps(env: Env) -> u32 {
+        extend_instance_ttl(&env);
+        env.storage().instance().get(&DataKey::FeeBps).unwrap_or(0)
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -135,6 +177,7 @@ impl AmanPayEscrow {
             revision_period,
             revision_count: 0,
             status: DealStatus::Created,
+            cancel_requested_by: None,
             created_at: now,
             funded_at: None,
             delivered_at: None,
@@ -344,6 +387,46 @@ impl AmanPayEscrow {
         }
         .publish(&env);
         Ok(())
+    }
+
+    pub fn request_or_confirm_mutual_cancel(
+        env: Env,
+        id: u64,
+        caller: Address,
+    ) -> Result<bool, ContractError> {
+        let mut deal = read_deal(&env, id)?;
+        if deal.status != DealStatus::Funded
+            && deal.status != DealStatus::Delivered
+            && deal.status != DealStatus::RevisionRequested
+        {
+            return Err(ContractError::InvalidState);
+        }
+        if caller != deal.buyer && caller != deal.seller {
+            return Err(ContractError::InvalidParty);
+        }
+        caller.require_auth();
+
+        if let Some(ref requester) = deal.cancel_requested_by {
+            if requester == &caller {
+                return Ok(false);
+            }
+            refund_to_buyer(&env, &mut deal);
+            MutualCancelCompleted {
+                deal_id: id,
+                amount: deal.amount,
+            }
+            .publish(&env);
+            Ok(true)
+        } else {
+            deal.cancel_requested_by = Some(caller.clone());
+            write_deal(&env, &deal);
+            MutualCancelRequested {
+                deal_id: id,
+                requested_by: caller,
+            }
+            .publish(&env);
+            Ok(false)
+        }
     }
 
     pub fn cancel_unfunded_deal(env: Env, id: u64) -> Result<(), ContractError> {

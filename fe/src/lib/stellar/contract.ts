@@ -195,6 +195,11 @@ export async function invokeDealAction(
       method = "resolve_dispute";
       scArgs = [dealIdVal, enumScVal("ReleaseSeller")];
       break;
+    case "mutual_cancel":
+      method = "request_or_confirm_mutual_cancel";
+      if (!args.opener) throw new Error("Caller address wajib diisi");
+      scArgs = [dealIdVal, new Address(args.opener).toScVal()];
+      break;
     default:
       throw new Error(`Aksi tidak didukung: ${action}`);
   }

@@ -19,6 +19,7 @@ const deal: ChainDeal = {
   reviewPeriodSeconds: 100,
   revisionLimit: 2,
   revisionCount: 0,
+  cancelRequestedBy: null,
   createdAt: 1_000,
 };
 
@@ -35,16 +36,18 @@ describe("deal lifecycle actions", () => {
     expect(getAvailableActions(funded, "GOUTSIDER", 2_001, true)).toEqual(["refund_timeout"]);
   });
 
-  it("supports delivery, dispute, revision, approve, and review timeout", () => {
+  it("supports delivery, dispute, revision, approve, mutual cancel, and review timeout", () => {
     expect(getAvailableActions({ ...deal, status: "Funded" }, "GSELLER", 1_500, true)).toEqual([
       "submit_delivery",
       "open_dispute",
+      "mutual_cancel",
     ]);
     const delivered = { ...deal, status: "Delivered" as const, reviewDeadline: 1_800 };
     expect(getAvailableActions(delivered, "GBUYER", 1_700, true)).toEqual([
       "approve",
       "request_revision",
       "open_dispute",
+      "mutual_cancel",
     ]);
     expect(getAvailableActions(delivered, "GOUTSIDER", 1_801, true)).toEqual(["release_timeout"]);
   });
