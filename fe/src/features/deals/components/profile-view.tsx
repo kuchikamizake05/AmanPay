@@ -253,9 +253,3 @@ export function ProfileView({ address }: { address: string }) {
     </div>
   );
 }
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
