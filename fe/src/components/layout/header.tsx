@@ -19,63 +19,50 @@ export function Header() {
   };
 
   return (
-    <>
-      <div className="bg-[#116149]/90 text-white text-[11px] py-1 px-4 text-center font-medium flex items-center justify-center gap-1.5 shadow-xs">
-        <Sparkles size={13} className="text-[#e8a62e]" />
-        <span>
-          <strong>Demo Walkthrough:</strong> Use the <i>Simulator</i> panel at the bottom-right to switch roles between Seller and Buyer instantly.
+    <header className="site-header">
+      <Link href="/" className="brand" aria-label="AmanPay Home">
+        <span className="brand__mark">
+          <ShieldCheck size={19} />
         </span>
-      </div>
-      <header className="site-header">
-        <Link href="/" className="brand" aria-label="AmanPay Home">
-          <span className="brand__mark">
-            <ShieldCheck size={19} />
-          </span>
-          AmanPay
-        </Link>
-        <nav aria-label="Main navigation">
-          <Link href="/dashboard">My Deals</Link>
-          <Link href="/deals/new">Create Deal</Link>
-        </nav>
-        {wallet.address ? (
-          <div className="flex items-center gap-2">
-            {wallet.isSimulator && (
-              <span className="bg-[#e8a62e]/10 border border-[#e8a62e]/30 text-[#e8a62e] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-                Simulator
-              </span>
-            )}
-            <button
-              className="wallet-pill cursor-pointer flex items-center hover:bg-white/80 active:scale-95 transition-all"
-              onClick={handleCopy}
-              title="Copy wallet address"
-            >
-              <span 
-                className="wallet-pill__signal" 
-                style={{ backgroundColor: wallet.isSimulator ? "var(--amber)" : "#2aa779" }} 
-              />
-              <span>
-                {copied ? "Copied!" : short(wallet.address)}
-              </span>
-            </button>
-            <button
-              className="p-2 border border-neutral-200 hover:border-red-200 hover:bg-red-50 text-neutral-500 hover:text-red-600 rounded-full transition-all cursor-pointer flex items-center justify-center"
-              onClick={wallet.disconnect}
-              title="Disconnect wallet"
-            >
-              <LogOut size={13} />
-            </button>
-          </div>
-        ) : (
+        AmanPay
+      </Link>
+      <nav aria-label="Main navigation">
+        <Link href="/dashboard">My Deals</Link>
+        <Link href="/deals/new">Create Deal</Link>
+      </nav>
+      {wallet.address ? (
+        <div className="flex items-center gap-2">
           <button
-            className="button button--dark button--small"
-            onClick={wallet.connect}
-            disabled={wallet.connecting}
+            className="wallet-pill cursor-pointer flex items-center hover:bg-white/80 active:scale-95 transition-all"
+            onClick={handleCopy}
+            title="Copy wallet address"
           >
-            <Wallet size={16} />{" "}
-            {wallet.connecting ? "Opening…" : "Connect Wallet"}
+            <span 
+              className="wallet-pill__signal" 
+              style={{ backgroundColor: "#2aa779" }} 
+            />
+            <span>
+              {copied ? "Copied!" : short(wallet.address)}
+            </span>
           </button>
-        )}
-      </header>
-    </>
+          <button
+            className="p-2 border border-neutral-200 hover:border-red-200 hover:bg-red-50 text-neutral-500 hover:text-red-600 rounded-full transition-all cursor-pointer flex items-center justify-center"
+            onClick={wallet.disconnect}
+            title="Disconnect wallet"
+          >
+            <LogOut size={13} />
+          </button>
+        </div>
+      ) : (
+        <button
+          className="button button--dark button--small"
+          onClick={wallet.connect}
+          disabled={wallet.connecting}
+        >
+          <Wallet size={16} />{" "}
+          {wallet.connecting ? "Opening…" : "Connect Wallet"}
+        </button>
+      )}
+    </header>
   );
 }
