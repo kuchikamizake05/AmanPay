@@ -12,10 +12,10 @@ describe("Receipt Message Formatter", () => {
       "https://amanpay.co"
     );
 
-    expect(message).toContain("⚡ AmanPay Escrow Receipt: Deal #0012 sukses diselesaikan!");
-    expect(message).toContain("Judul: Web design landing page");
-    expect(message).toContain("Nominal: 50.00 USDC");
-    expect(message).toContain("Status: ✅ RELEASED (Dana Dirilis)");
+    expect(message).toContain("⚡ AmanPay Escrow Receipt: Deal #0012 successfully settled!");
+    expect(message).toContain("Title: Web design landing page");
+    expect(message).toContain("Amount: 50.00 USDC");
+    expect(message).toContain("Status: ✅ RELEASED (Funds Settled)");
     expect(message).toContain("https://amanpay.co/deals/12/receipt");
   });
 
@@ -29,10 +29,10 @@ describe("Receipt Message Formatter", () => {
       "https://amanpay.co"
     );
 
-    expect(message).toContain("⚡ AmanPay Escrow Receipt: Deal #0045 sukses diselesaikan!");
-    expect(message).toContain("Judul: Logo design pack");
-    expect(message).toContain("Nominal: 100.5 XLM");
-    expect(message).toContain("Status: ↩️ REFUNDED (Dana Dikembalikan)");
+    expect(message).toContain("⚡ AmanPay Escrow Receipt: Deal #0045 successfully settled!");
+    expect(message).toContain("Title: Logo design pack");
+    expect(message).toContain("Amount: 100.5 XLM");
+    expect(message).toContain("Status: ↩️ REFUNDED (Funds Returned)");
     expect(message).toContain("https://amanpay.co/deals/45/receipt");
   });
 });

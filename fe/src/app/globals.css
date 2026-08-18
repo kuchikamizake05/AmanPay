@@ -290,6 +290,143 @@ em {
   font: bold 9px/1.2 monospace;
   transform: rotate(-12deg);
 }
+.lifecycle-preview {
+  background: var(--paper-2);
+  border: 1px solid #ded7c7;
+  box-shadow: var(--shadow);
+  padding: 24px;
+  min-height: 360px;
+  position: relative;
+  transform: rotate(1deg);
+}
+.lifecycle-preview__top,
+.lifecycle-preview__stages,
+.lifecycle-preview__amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.lifecycle-preview__top {
+  color: var(--muted);
+  font: 700 11px/1 monospace;
+  letter-spacing: 0.1em;
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 14px;
+}
+.lifecycle-preview__live {
+  color: var(--green);
+}
+.lifecycle-preview__live i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 4px rgba(17, 97, 73, 0.1);
+}
+.lifecycle-preview__track {
+  height: 3px;
+  margin: 38px 4px -2px;
+  background: var(--line);
+}
+.lifecycle-preview__track span {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  transition: width 0.5s ease;
+}
+.lifecycle-preview__stages {
+  align-items: flex-start;
+  margin: 0 -3px 28px;
+}
+.lifecycle-preview__stages > div {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font: 700 10px monospace;
+}
+.lifecycle-preview__stages > div span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper-2);
+}
+.lifecycle-preview__stages > div.is-active {
+  color: var(--green);
+}
+.lifecycle-preview__stages > div.is-active span {
+  border-color: var(--green);
+  background: var(--green-2);
+}
+.lifecycle-preview__state {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 15px;
+  background: var(--green-2);
+  color: var(--green);
+  animation: lifecycle-enter 0.45s ease both;
+}
+.lifecycle-preview__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(17, 97, 73, 0.12);
+}
+.lifecycle-preview__state p {
+  margin: 0;
+  font-weight: 800;
+}
+.lifecycle-preview__state span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.lifecycle-preview__amount {
+  align-items: flex-end;
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
+}
+.lifecycle-preview__amount span,
+.lifecycle-preview__amount em {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-style: normal;
+}
+.lifecycle-preview__amount strong {
+  font: 700 30px/1 "Iowan Old Style", serif;
+}
+.lifecycle-preview__replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--green);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+}
+@keyframes lifecycle-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lifecycle-preview__state,
+  .lifecycle-preview__track span { animation: none; transition: none; }
+}
 .trust-strip {
   border-block: 1px solid var(--line);
   min-height: 70px;

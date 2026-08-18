@@ -10,6 +10,7 @@ import {
   ShieldAlert,
   Code2,
 } from "lucide-react";
+import { LifecyclePreview } from "@/features/landing/components/lifecycle-preview";
 
 export default function Home() {
   return (
@@ -37,41 +38,7 @@ export default function Home() {
             <Check size={14} /> Running on Stellar Testnet · 100% Non-Custodial · No Middleman Risk
           </p>
         </div>
-        <div
-          className="receipt-card reveal reveal--late"
-          aria-label="Example deal card"
-        >
-          <div className="receipt-card__top">
-            <span>AMANPAY / 001</span>
-            <span className="live-dot">LIVE ESCROW</span>
-          </div>
-          <p className="receipt-card__label">Valorant Radiant Account + Email Access</p>
-          <strong className="receipt-card__amount">50.00 USDC</strong>
-          <div className="secure-line">
-            <LockKeyhole size={18} />
-            <div>
-              <b>Funds Locked in Smart Contract</b>
-              <span>Awaiting seller credentials & buyer verification</span>
-            </div>
-          </div>
-          <div className="receipt-card__parties">
-            <span>
-              Buyer
-              <br />
-              <b>GBUY…4H2A</b>
-            </span>
-            <span>
-              Seller
-              <br />
-              <b>GSELL…P91K</b>
-            </span>
-          </div>
-          <div className="receipt-card__seal">
-            VERIFIED
-            <br />
-            <small>STELLAR</small>
-          </div>
-        </div>
+        <LifecyclePreview />
       </section>
 
       <section className="trust-strip">
@@ -81,7 +48,7 @@ export default function Home() {
       </section>
 
       {/* Real-world Problem & Use Cases */}
-      <section className="section shell">
+      <section className="section shell" id="use-cases">
         <div className="section-heading">
           <p className="eyebrow">The Real Problem with Social Commerce</p>
           <h2>
@@ -127,7 +94,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section shell">
+      <section className="section shell" id="how-it-works">
         <div className="section-heading">
           <p className="eyebrow">How It Works</p>
           <h2>From Messenger Chat to On-Chain Finality</h2>
@@ -157,6 +124,16 @@ export default function Home() {
               Seller submits delivery proof. Buyer approves (or review timer expires), instantly releasing payment directly to the seller with a verifiable receipt.
             </p>
           </article>
+        </div>
+      </section>
+
+      <section className="section shell" id="security">
+        <div className="section-heading">
+          <p className="eyebrow">Security by default</p>
+          <h2>Rules replace trust.</h2>
+          <p className="max-w-2xl text-sm text-[#667068] mt-3">
+            AmanPay never takes custody of funds. Deal terms are hashed, escrow state is enforced on-chain, and completed transactions produce public receipts.
+          </p>
         </div>
       </section>
     </main>
