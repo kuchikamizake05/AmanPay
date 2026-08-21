@@ -38,7 +38,7 @@ describe("deal input", () => {
 });
 
 describe("deal status presentation", () => {
-  it("uses human escrow language", () => {
+  it("uses clear English escrow language", () => {
     expect(getStatusPresentation("Created")).toEqual({
       label: "Awaiting Funding",
       tone: "waiting",

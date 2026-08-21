@@ -12,6 +12,6 @@ describe("DealStatusBadge", () => {
   it("can render compact status without explanation", () => {
     render(<DealStatusBadge status="Released" />);
     expect(screen.getByText("Funds Released")).toBeVisible();
-    expect(screen.queryByText(/Deal completed/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Deal successfully settled/)).not.toBeInTheDocument();
   });
 });
