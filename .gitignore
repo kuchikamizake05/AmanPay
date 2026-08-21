@@ -4,3 +4,8 @@
 /fe/coverage
 /fe/tsconfig.tsbuildinfo
 /fe/.env*.local
+
+.vercel
+.env*
+node_modules/
+supabase/.temp/

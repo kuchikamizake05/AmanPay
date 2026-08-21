@@ -40,10 +40,10 @@ describe("deal input", () => {
 describe("deal status presentation", () => {
   it("uses human escrow language", () => {
     expect(getStatusPresentation("Created")).toEqual({
-      label: "Menunggu pendanaan",
+      label: "Awaiting Funding",
       tone: "waiting",
-      description: "Deal sudah dibuat. Buyer belum mengunci dana.",
+      description: "Deal parameters initialized. Waiting for buyer to fund escrow.",
     });
-    expect(getStatusPresentation("Released").label).toBe("Dana diteruskan");
+    expect(getStatusPresentation("Released").label).toBe("Funds Released");
   });
 });

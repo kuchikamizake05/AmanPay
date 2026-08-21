@@ -11,6 +11,11 @@ export const stellarConfig = {
     (isPublic
       ? "https://soroban-rpc.mainnet.stellar.org"
       : "https://soroban-testnet.stellar.org"),
+  horizonUrl:
+    process.env.NEXT_PUBLIC_STELLAR_HORIZON_URL ??
+    (isPublic
+      ? "https://horizon.stellar.org"
+      : "https://horizon-testnet.stellar.org"),
   contractId: process.env.NEXT_PUBLIC_AMANPAY_CONTRACT_ID ?? "",
   readSource: process.env.STELLAR_READ_SOURCE ?? "",
   defaultResolver: process.env.NEXT_PUBLIC_DEFAULT_RESOLVER ?? "",

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Plus, Wallet, LoaderCircle, Share2, Check } from "lucide-react";
 import { useWallet } from "@/features/wallet/wallet-provider";
+import { NativePayment } from "./native-payment";
 
 type Row = {
   contract_deal_id: string;
@@ -35,10 +36,10 @@ export function Dashboard() {
 
   useEffect(() => {
     if (!wallet.address) {
-      setLoading(false);
+      queueMicrotask(() => setLoading(false));
       return;
     }
-    setLoading(true);
+    queueMicrotask(() => setLoading(true));
     fetch(`/api/deals?wallet=${wallet.address}`)
       .then((response) => response.json())
       .then((data) => {
@@ -119,10 +120,14 @@ export function Dashboard() {
           </p>
         </div>
         <div className="bg-white/60 border border-[#d8d2c3] p-4 rounded-xl shadow-2xs">
-          <p className="text-xs text-[#667068] font-medium">Settlement Guarantee</p>
-          <p className="text-2xl font-black text-[#e8a62e] mt-1">100% Non-Custodial</p>
+          <p className="text-xs text-[#667068] font-medium">Native XLM Balance</p>
+          <p className="text-2xl font-black text-[#e8a62e] mt-1">
+            {wallet.balanceLoading ? "Loading…" : `${wallet.nativeBalance ?? "—"} XLM`}
+          </p>
         </div>
       </div>
+
+      <NativePayment />
 
       {!configured ? (
         <div className="notice">

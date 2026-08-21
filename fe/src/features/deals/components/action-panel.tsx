@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ChainDeal } from "@/lib/stellar/codec";
 import { invokeDealAction } from "@/lib/stellar/contract";
 import { useWallet } from "@/features/wallet/wallet-provider";
@@ -33,7 +33,13 @@ export function ActionPanel({ deal, termsHashVerified, onActionComplete }: Actio
   const [disputeReason, setDisputeReason] = useState("");
   const [disputeEvidenceUrl, setDisputeEvidenceUrl] = useState("");
 
-  const now = Math.floor(Date.now() / 1_000);
+  const [now, setNow] = useState(() => Math.floor(Date.now() / 1_000));
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setNow(Math.floor(Date.now() / 1_000)), 1_000);
+    return () => window.clearInterval(interval);
+  }, []);
+
   const availableActions = getAvailableActions(deal, wallet.address, now, termsHashVerified);
 
   if (!wallet.address) {

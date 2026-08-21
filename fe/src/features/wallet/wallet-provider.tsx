@@ -9,15 +9,19 @@ import {
   useState,
 } from "react";
 import { stellarConfig } from "@/config/stellar";
+import { fetchNativeBalance } from "@/lib/stellar/balance";
 import { Keypair, TransactionBuilder, rpc } from "@stellar/stellar-sdk";
 
 type WalletContextValue = {
   address: string | null;
+  nativeBalance: string | null;
+  balanceLoading: boolean;
   connecting: boolean;
   isSimulator: boolean;
   connect: () => Promise<void>;
   connectSimulator: (role: "seller" | "buyer") => Promise<void>;
   disconnect: () => Promise<void>;
+  refreshBalance: () => Promise<void>;
   signTransaction: (xdr: string) => Promise<string>;
 };
 
@@ -44,8 +48,25 @@ function loadKit() {
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [address, setAddress] = useState<string | null>(null);
+  const [nativeBalance, setNativeBalance] = useState<string | null>(null);
+  const [balanceLoading, setBalanceLoading] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [isSimulator, setIsSimulator] = useState(false);
+
+  const refreshBalance = useCallback(async () => {
+    if (!address) {
+      setNativeBalance(null);
+      return;
+    }
+    setBalanceLoading(true);
+    try {
+      setNativeBalance(await fetchNativeBalance(address));
+    } catch {
+      setNativeBalance(null);
+    } finally {
+      setBalanceLoading(false);
+    }
+  }, [address]);
 
   useEffect(() => {
     fetch("/api/auth/verify")
@@ -61,6 +82,13 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!address) return;
+    void fetchNativeBalance(address)
+      .then((balance) => setNativeBalance(balance))
+      .catch(() => setNativeBalance(null));
+  }, [address]);
 
   const connect = useCallback(async () => {
     setConnecting(true);
@@ -156,7 +184,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       // 2. Check and fund if needed
       let needsFunding = false;
       try {
-        const balanceRes = await fetch(`https://horizon-testnet.stellar.org/accounts/${pubKey}`);
+        const balanceRes = await fetch(
+          `${stellarConfig.horizonUrl}/accounts/${pubKey}`,
+        );
         if (!balanceRes.ok) {
           needsFunding = true;
         }
@@ -227,6 +257,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       console.error("Gagal memutuskan wallet:", err);
     } finally {
       setAddress(null);
+      setNativeBalance(null);
+      setBalanceLoading(false);
     }
   }, [isSimulator]);
 
@@ -257,14 +289,28 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(
     () => ({
       address,
+      nativeBalance,
+      balanceLoading,
       connecting,
       isSimulator,
       connect,
       connectSimulator,
       disconnect,
+      refreshBalance,
       signTransaction,
     }),
-    [address, connect, connectSimulator, connecting, disconnect, isSimulator, signTransaction],
+    [
+      address,
+      balanceLoading,
+      connect,
+      connectSimulator,
+      connecting,
+      disconnect,
+      isSimulator,
+      nativeBalance,
+      refreshBalance,
+      signTransaction,
+    ],
   );
 
   return (

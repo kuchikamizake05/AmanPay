@@ -11,12 +11,13 @@ export function DemoSwitcher() {
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
-    if (wallet.address && wallet.isSimulator) {
-      const active = localStorage.getItem("amanpay:simulator:active") as "seller" | "buyer" | null;
+    const timer = setTimeout(() => {
+      const active = wallet.address && wallet.isSimulator
+        ? localStorage.getItem("amanpay:simulator:active") as "seller" | "buyer" | null
+        : null;
       setActiveRole(active);
-    } else {
-      setActiveRole(null);
-    }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [wallet.address, wallet.isSimulator]);
 
   const handleSwitch = async (role: "seller" | "buyer") => {

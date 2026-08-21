@@ -49,7 +49,12 @@ export async function POST(request: Request) {
     });
 
     if (dbError) {
-      console.error("Supabase error saving challenge:", dbError);
+      console.error("Supabase challenge persistence failed", {
+        code: dbError.code,
+        message: dbError.message,
+        details: dbError.details,
+        hint: dbError.hint,
+      });
       return NextResponse.json({ error: "Gagal menyimpan challenge" }, { status: 500 });
     }
 

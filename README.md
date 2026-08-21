@@ -9,15 +9,28 @@ Transform messy informal chat deals from WhatsApp, Telegram, X, and Discord into
 
 ---
 
-## Evaluation Guide (Interactive Walkthrough)
+## White Belt Evaluation Guide
 
-Evaluators can test the complete, end-to-end non-custodial rekber (escrow) flow without needing external wallet extensions using our built-in **Wallet Simulator**:
+AmanPay includes native XLM payment proof alongside its Soroban escrow flow. Configure Freighter for **Stellar Testnet** before testing.
 
-1. **AI Deal Autofill (`/deals/new`)**: Paste messy chat text or upload a WhatsApp/Telegram screenshot. The Gemini multimodal parser extracts key transaction parameters into structured form fields automatically.
-2. **Dual-Role Wallet Simulator**: Switch seamlessly between **Seller** and **Buyer** with instant auto-funding via Stellar Friendbot.
-3. **Escrow State Machine Lifecycle**: Experience state transitions from `Created` -> `Funded` -> `Delivered` -> `Approved & Released` or test permissionless timeouts and mutual cancellations.
-4. **Verified Public Receipts (`/deals/[id]/receipt`)**: Inspect verifiable on-chain settlement receipts with single-click WhatsApp/Telegram sharing.
-5. **Reputation Profiles (`/profiles/[address]`)**: Audit transparent seller/buyer track records, dispute rates, and completed transaction volumes.
+1. Open `/dashboard`, click **Connect Wallet**, select Freighter, and approve wallet-signature login.
+2. Confirm **Native XLM Balance** appears in dashboard and beside connected address in header. Balance comes from Horizon Testnet account data, not XLM SAC escrow balance.
+3. In **Send native XLM**, enter funded Testnet recipient and positive XLM amount with at most seven decimals.
+4. Click **Send XLM on Testnet**, approve Freighter signature, then confirm success state and transaction-hash StellarExpert link.
+5. Click disconnect icon in header. Address and native balance clear.
+
+Native payment sends `Asset.native()` XLM directly between accounts. AmanPay deal funding remains separate Soroban escrow funding with configured SAC assets.
+
+### Required submission screenshots
+
+Capture real Testnet evidence after completing above flow and add files under `docs/screenshots/` before submitting:
+
+- `wallet-connected.png`
+- `balance-displayed.png`
+- `payment-success.png`
+- `transaction-result.png`
+
+Do not use simulated or fabricated transaction evidence.
 
 ---
 
@@ -45,7 +58,7 @@ However, traditional informal trade suffers from critical pain points:
 | **AmanPay Escrow Contract** | [`CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52`](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52) | `DEPLOYED & VERIFIED` |
 | **Native XLM SAC** | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` | `ENABLED` |
 | **Mock USDC SAC** | `CD72G634XB5BMTMGJ43ER7Q5QLEYX7XGS6JT7BOMDJTOGTBL3EP4JD66` | `ENABLED` |
-| **Default Dispute Resolver** | `GBUYER...` (Configurable via `.env`) | `ACTIVE` |
+| **Default Dispute Resolver** | Configure a real Testnet `G…` address in `.env.local` | `OPTIONAL` |
 
 ---
 
@@ -128,14 +141,40 @@ Requirements: Node.js 18+ and npm.
 ```bash
 cd fe
 cp .env.example .env.local
-npm install
+npm ci
 npm run dev
 ```
 
-Run test suite:
+Run checks:
 ```bash
+npm run lint
 npm run test
+npm run build
 ```
+
+`.env.local` accepts `NEXT_PUBLIC_STELLAR_HORIZON_URL` when using a custom Horizon instance. Default is `https://horizon-testnet.stellar.org` for Testnet.
+
+### 3. Supabase product data
+
+AmanPay persists public deal metadata/timeline and role-gated private delivery or dispute data in Supabase. Set matching values from one active Supabase project:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<server-only-service-role-key>
+AUTH_SESSION_SECRET=<at-least-32-random-characters>
+```
+
+Never expose `SUPABASE_SERVICE_ROLE_KEY` in `NEXT_PUBLIC_*`, browser code, screenshots, or Git. Before applying migrations to an existing project, inspect migration history and create a database backup. Never run `supabase db reset` on production.
+
+```bash
+supabase login
+supabase link --project-ref <project-ref>
+supabase migration list
+supabase db push
+```
+
+This applies `supabase/migrations/202606210001_create_deals.sql` and `supabase/migrations/202606210002_phase3_tables.sql`. After changing environment values, restart local server or redeploy before retrying wallet login.
 
 ---
 

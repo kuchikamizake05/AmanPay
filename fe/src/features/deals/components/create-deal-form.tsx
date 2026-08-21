@@ -82,14 +82,14 @@ export function CreateDealForm() {
   const [buyerLocked, setBuyerLocked] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const buyerParam = params.get("buyer");
-      if (buyerParam && /^G[A-Z2-7]{55}$/.test(buyerParam)) {
-        setBuyerAddress(buyerParam);
-        setBuyerLocked(true);
-      }
-    }
+    const params = new URLSearchParams(window.location.search);
+    const buyerParam = params.get("buyer");
+    if (!buyerParam || !/^G[A-Z2-7]{55}$/.test(buyerParam)) return;
+    const timer = setTimeout(() => {
+      setBuyerAddress(buyerParam);
+      setBuyerLocked(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const preset = useMemo(() => presets[dealType], [dealType]);

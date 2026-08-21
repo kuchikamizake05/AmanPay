@@ -32,6 +32,9 @@ export function Header() {
       </nav>
       {wallet.address ? (
         <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-[#116149] whitespace-nowrap" title="Native XLM balance">
+            XLM {wallet.balanceLoading ? "…" : wallet.nativeBalance ?? "—"}
+          </span>
           <button
             className="wallet-pill cursor-pointer flex items-center hover:bg-white/80 active:scale-95 transition-all"
             onClick={handleCopy}
