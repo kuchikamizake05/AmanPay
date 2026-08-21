@@ -500,6 +500,12 @@
                   },
                   {
                     "key": {
+                      "symbol": "cancel_requested_by"
+                    },
+                    "val": "void"
+                  },
+                  {
+                    "key": {
                       "symbol": "closed_at"
                     },
                     "val": "void"
@@ -689,6 +695,12 @@
                     "val": {
                       "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M"
                     }
+                  },
+                  {
+                    "key": {
+                      "symbol": "cancel_requested_by"
+                    },
+                    "val": "void"
                   },
                   {
                     "key": {

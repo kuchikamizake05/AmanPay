@@ -699,6 +699,12 @@
                   },
                   {
                     "key": {
+                      "symbol": "cancel_requested_by"
+                    },
+                    "val": "void"
+                  },
+                  {
+                    "key": {
                       "symbol": "closed_at"
                     },
                     "val": "void"
