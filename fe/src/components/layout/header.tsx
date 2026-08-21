@@ -45,6 +45,9 @@ export function Header() {
           <a href="#use-cases" className="text-sm font-semibold hover:text-[#116149] transition-colors">
             Use Cases
           </a>
+          <Link href="/proof" className="text-sm font-semibold hover:text-[#116149] transition-colors">
+            Proof
+          </Link>
           <Link
             href="/dashboard"
             className="button button--primary button--small font-bold flex items-center gap-1.5 shadow-sm"
