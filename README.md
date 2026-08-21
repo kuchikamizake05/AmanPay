@@ -3,7 +3,7 @@
 **Deal OS & Programmable Non-Custodial Escrow for Informal Digital Commerce on Stellar Soroban**  
 Transform messy informal chat deals from WhatsApp, Telegram, X, and Discord into structured, legally clear, and escrow-backed on-chain transactions.
 
-[**Live Web Application**](https://fe-steel-pi.vercel.app) · [**Stellar Testnet Contract**](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52) · [**Architecture Spec**](./ARCHITECTURE.md) · [**PRD**](./PRD.md)
+[**Live Web Application**](https://amanpay-fi.vercel.app) · [**Stellar Testnet Contract**](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52) · [**Architecture Spec**](./ARCHITECTURE.md) · [**PRD**](./PRD.md)
 
 [![Stellar Soroban Testnet](https://img.shields.io/badge/Stellar-Soroban%20Testnet%20(Deployed)-000000?style=flat-square&logo=stellar)](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52) [![Soroban Rust Tests](https://img.shields.io/badge/Soroban%20Rust-20%20Tests%20Passing-orange?style=flat-square&logo=rust)](https://github.com/kuchikamizake05/kelpie) [![Frontend Vitest](https://img.shields.io/badge/Vitest%20TypeScript-30%20Tests%20Passing-38BDF8?style=flat-square&logo=vitest)](https://github.com/kuchikamizake05/kelpie) [![AI Multimodal Parser](https://img.shields.io/badge/Gemini%201.5%20Flash-Vision%20%26%20Schema%20Structured-4E75F6?style=flat-square&logo=google)](https://github.com/kuchikamizake05/kelpie)
 
