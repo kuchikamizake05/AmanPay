@@ -7,39 +7,39 @@ Turn chat-based digital deals into structured terms and on-chain escrow workflow
 
 ---
 
-## Resubmission Checklist: Stellar Testnet Wallet Flow
+## Product Overview
 
-AmanPay supports native XLM Testnet payments beside Soroban escrow flow. Configure Freighter for **Stellar Testnet** before testing.
+AmanPay is built for informal digital commerce where deal terms, payment, and delivery often live across chat messages. It converts agreement details into structured deal terms, anchors them with a cryptographic hash, and executes payment rules through Stellar Soroban escrow.
 
-1. Open [dashboard](https://amanpay-fi.vercel.app/dashboard), click **Connect Wallet**, select Freighter, approve wallet-signature login.
-2. Confirm **Native XLM Balance** appears in dashboard and beside connected address in header. Balance comes from Horizon Testnet account data, not XLM SAC escrow balance.
-3. In **Send native XLM**, enter funded Testnet recipient and positive XLM amount with at most seven decimals.
-4. Click **Send XLM on Testnet**, approve Freighter signature, then confirm success state and transaction-hash [StellarExpert Testnet](https://stellar.expert/explorer/testnet) link.
-5. Click disconnect icon in header. Address and native balance clear.
+### Core Capabilities
 
-Native payment sends `Asset.native()` XLM directly between accounts. AmanPay deal funding remains separate Soroban SAC escrow funding.
+- **Multimodal deal intake:** Parse chat text or screenshots into reviewable structured terms.
+- **Programmable escrow:** Lock XLM or USDC SAC assets under explicit delivery, review, cancellation, and dispute rules.
+- **Wallet-native access:** Connect Freighter, authenticate through wallet signatures, inspect native XLM balance, and send native XLM on Stellar Testnet.
+- **Settlement visibility:** Completed deals expose public receipts, wallet track records, terms hashes, and Testnet explorer links.
+- **Product data layer:** Supabase stores public metadata and timelines while role-gated delivery and dispute data remain private.
 
-### Required real screenshots
+Explore [Product Proof](https://amanpay-fi.vercel.app/proof), open [dashboard](https://amanpay-fi.vercel.app/dashboard), or create a [Testnet deal](https://amanpay-fi.vercel.app/deals/new).
 
-Capture evidence only after completing real Freighter Testnet payment. Add these files under `docs/screenshots/` before submitting:
+---
 
-- `wallet-connected.png`
-- `balance-displayed.png`
-- `payment-success.png`
-- `transaction-result.png`
+## How It Works
 
-Screenshot evidence is pending until real transaction completes. Do not use simulated, edited, or fabricated transaction evidence.
+1. **Structure deal:** Buyer and seller review title, scope, asset, amount, deadlines, and review rules.
+2. **Fund escrow:** Buyer signs a Soroban transaction to lock supported XLM or USDC SAC asset.
+3. **Submit delivery:** Seller adds delivery proof for buyer review.
+4. **Settle by rules:** Buyer approval, review timeout, mutual cancellation, or dispute resolution moves funds according to contract state.
 
-## Product Proof
+Native XLM wallet payments use `Asset.native()` directly between accounts. This remains separate from Soroban SAC escrow funding.
 
-Open [Product Proof](https://amanpay-fi.vercel.app/proof) for evidence model.
+---
 
-- **Terms hash:** compare deal terms with immutable hash before funding.
-- **Non-custodial escrow:** Soroban contract enforces fund movement; AmanPay holds no escrow private key.
-- **Settlement receipt:** finalized `Released` or `Refunded` deals publish at `/deals/[id]/receipt`, including terms hash and Testnet transaction link.
-- **Wallet track record:** public settlement history is available at `/profiles/[address]` after real Testnet escrow activity exists.
+## Verification Surfaces
 
-AmanPay does not publish invented testimonials, wallets, transaction IDs, settlement counts, or success metrics.
+- `/proof` explains terms-hash, escrow, receipt, and wallet-history verification.
+- `/deals/[id]/receipt` publishes finalized `Released` or `Refunded` settlement receipts.
+- `/profiles/[address]` displays recorded public Testnet settlement history.
+- [StellarExpert Testnet](https://stellar.expert/explorer/testnet) independently verifies submitted transaction hashes.
 
 ---
 
