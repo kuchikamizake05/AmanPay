@@ -10,12 +10,14 @@ import {
   ShieldAlert,
   Code2,
 } from "lucide-react";
+import { InteractiveBackdrop } from "@/features/landing/components/interactive-backdrop";
 import { LifecyclePreview } from "@/features/landing/components/lifecycle-preview";
 
 export default function Home() {
   return (
     <main>
-      <section className="hero shell">
+      <section className="hero shell hero--interactive">
+        <InteractiveBackdrop />
         <div className="hero__copy reveal">
           <p className="eyebrow">Zero-Scam Escrow for Facebook Groups, Messenger & Digital Commerce</p>
           <h1>
@@ -62,7 +64,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
-          <div className="bg-white/60 border border-[#d8d2c3] p-6 rounded-xl">
+          <div className="landing-card landing-card--danger bg-white/60 border border-[#d8d2c3] p-6 rounded-xl">
             <div className="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center mb-4">
               <ShieldAlert size={20} />
             </div>
@@ -72,7 +74,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="bg-white/60 border border-[#d8d2c3] p-6 rounded-xl">
+          <div className="landing-card bg-white/60 border border-[#d8d2c3] p-6 rounded-xl">
             <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4">
               <Gamepad2 size={20} />
             </div>
@@ -82,7 +84,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="bg-white/60 border border-[#d8d2c3] p-6 rounded-xl">
+          <div className="landing-card bg-white/60 border border-[#d8d2c3] p-6 rounded-xl">
             <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
               <KeyRound size={20} />
             </div>

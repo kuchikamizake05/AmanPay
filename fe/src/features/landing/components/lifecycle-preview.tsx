@@ -57,7 +57,7 @@ export function LifecyclePreview() {
         </div>
       </div>
 
-      <div className="lifecycle-preview__state" key={stage}>
+      <div className={`lifecycle-preview__state ${isSettled ? "is-settled" : ""}`} key={stage}>
         <div className="lifecycle-preview__icon">
           {stage === "Created" && <FileCheck2 size={22} />}
           {stage === "Funded" && <LockKeyhole size={22} />}
