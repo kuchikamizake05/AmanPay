@@ -1,36 +1,45 @@
 # AmanPay
 
-**Deal OS & Programmable Non-Custodial Escrow for Informal Digital Commerce on Stellar Soroban**  
-Transform messy informal chat deals from WhatsApp, Telegram, X, and Discord into structured, legally clear, and escrow-backed on-chain transactions.
+**Deal OS & programmable non-custodial escrow for informal digital commerce on Stellar Soroban.**  
+Turn chat-based digital deals into structured terms and on-chain escrow workflows.
 
-[**Live Web Application**](https://amanpay-fi.vercel.app) · [**Stellar Testnet Contract**](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52) · [**Architecture Spec**](./ARCHITECTURE.md) · [**PRD**](./PRD.md)
-
-[![Stellar Soroban Testnet](https://img.shields.io/badge/Stellar-Soroban%20Testnet%20(Deployed)-000000?style=flat-square&logo=stellar)](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52) [![Soroban Rust Tests](https://img.shields.io/badge/Soroban%20Rust-20%20Tests%20Passing-orange?style=flat-square&logo=rust)](https://github.com/kuchikamizake05/kelpie) [![Frontend Vitest](https://img.shields.io/badge/Vitest%20TypeScript-30%20Tests%20Passing-38BDF8?style=flat-square&logo=vitest)](https://github.com/kuchikamizake05/kelpie) [![AI Multimodal Parser](https://img.shields.io/badge/Gemini%201.5%20Flash-Vision%20%26%20Schema%20Structured-4E75F6?style=flat-square&logo=google)](https://github.com/kuchikamizake05/kelpie)
+[**Live App**](https://amanpay-fi.vercel.app) · [**Product Proof**](https://amanpay-fi.vercel.app/proof) · [**Stellar Testnet Contract**](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52) · [**Architecture**](./ARCHITECTURE.md) · [**PRD**](./PRD.md)
 
 ---
 
-## White Belt Evaluation Guide
+## Resubmission Checklist: Stellar Testnet Wallet Flow
 
-AmanPay includes native XLM payment proof alongside its Soroban escrow flow. Configure Freighter for **Stellar Testnet** before testing.
+AmanPay supports native XLM Testnet payments beside Soroban escrow flow. Configure Freighter for **Stellar Testnet** before testing.
 
-1. Open `/dashboard`, click **Connect Wallet**, select Freighter, and approve wallet-signature login.
+1. Open [dashboard](https://amanpay-fi.vercel.app/dashboard), click **Connect Wallet**, select Freighter, approve wallet-signature login.
 2. Confirm **Native XLM Balance** appears in dashboard and beside connected address in header. Balance comes from Horizon Testnet account data, not XLM SAC escrow balance.
 3. In **Send native XLM**, enter funded Testnet recipient and positive XLM amount with at most seven decimals.
-4. Click **Send XLM on Testnet**, approve Freighter signature, then confirm success state and transaction-hash StellarExpert link.
+4. Click **Send XLM on Testnet**, approve Freighter signature, then confirm success state and transaction-hash [StellarExpert Testnet](https://stellar.expert/explorer/testnet) link.
 5. Click disconnect icon in header. Address and native balance clear.
 
-Native payment sends `Asset.native()` XLM directly between accounts. AmanPay deal funding remains separate Soroban escrow funding with configured SAC assets.
+Native payment sends `Asset.native()` XLM directly between accounts. AmanPay deal funding remains separate Soroban SAC escrow funding.
 
-### Required submission screenshots
+### Required real screenshots
 
-Capture real Testnet evidence after completing above flow and add files under `docs/screenshots/` before submitting:
+Capture evidence only after completing real Freighter Testnet payment. Add these files under `docs/screenshots/` before submitting:
 
 - `wallet-connected.png`
 - `balance-displayed.png`
 - `payment-success.png`
 - `transaction-result.png`
 
-Do not use simulated or fabricated transaction evidence.
+Screenshot evidence is pending until real transaction completes. Do not use simulated, edited, or fabricated transaction evidence.
+
+## Product Proof
+
+Open [Product Proof](https://amanpay-fi.vercel.app/proof) for evidence model.
+
+- **Terms hash:** compare deal terms with immutable hash before funding.
+- **Non-custodial escrow:** Soroban contract enforces fund movement; AmanPay holds no escrow private key.
+- **Settlement receipt:** finalized `Released` or `Refunded` deals publish at `/deals/[id]/receipt`, including terms hash and Testnet transaction link.
+- **Wallet track record:** public settlement history is available at `/profiles/[address]` after real Testnet escrow activity exists.
+
+AmanPay does not publish invented testimonials, wallets, transaction IDs, settlement counts, or success metrics.
 
 ---
 
