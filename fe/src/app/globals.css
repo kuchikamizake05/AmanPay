@@ -63,13 +63,17 @@ textarea {
   gap: 10px;
 }
 .brand__mark {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 34px;
   height: 34px;
-  border-radius: 50%;
-  background: var(--ink);
-  color: var(--paper);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(23, 35, 30, 0.08);
 }
 .site-header nav {
   display: flex;

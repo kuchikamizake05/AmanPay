@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   ArrowRight,
@@ -32,7 +33,14 @@ export function Header() {
     <header className="site-header">
       <Link href="/" className="brand" aria-label="AmanPay Home">
         <span className="brand__mark">
-          <ShieldCheck size={19} />
+          <Image
+            src="/icon.png"
+            alt="AmanPay Logo"
+            width={34}
+            height={34}
+            className="w-full h-full object-cover"
+            priority
+          />
         </span>
         AmanPay
       </Link>

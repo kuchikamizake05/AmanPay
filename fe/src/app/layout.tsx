@@ -6,6 +6,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "AmanPay — Non-Custodial Escrow & Deal OS",
   description: "Programmable smart contract escrow for informal digital commerce and chat deals on Stellar Soroban.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
