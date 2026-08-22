@@ -329,9 +329,18 @@ em {
   background: var(--green);
   box-shadow: 0 0 0 4px rgba(17, 97, 73, 0.1);
 }
+.lifecycle-preview__stepper {
+  position: relative;
+  margin: 32px 0 28px;
+}
 .lifecycle-preview__track {
+  position: absolute;
+  z-index: 0;
+  top: 11px;
+  right: 11px;
+  left: 11px;
   height: 3px;
-  margin: 38px 4px -2px;
+  transform: translateY(-50%);
   background: var(--line);
 }
 .lifecycle-preview__track span {
@@ -341,8 +350,10 @@ em {
   transition: width 0.5s ease;
 }
 .lifecycle-preview__stages {
+  position: relative;
+  z-index: 1;
   align-items: flex-start;
-  margin: 0 -3px 28px;
+  margin: 0;
 }
 .lifecycle-preview__stages > div {
   display: grid;
