@@ -13,9 +13,30 @@ import {
 import { InteractiveBackdrop } from "@/features/landing/components/interactive-backdrop";
 import { LifecyclePreview } from "@/features/landing/components/lifecycle-preview";
 
+const trustMarks = [
+  "Immutable Terms Hash",
+  "Zero Human Middlemen",
+  "Verifiable Settlement Receipts",
+  "Soroban Smart Contracts",
+  "Non-Custodial Escrow",
+];
+
+function TrustMarks({ hidden = false }: { hidden?: boolean }) {
+  return (
+    <div className="trust-strip__group" aria-hidden={hidden || undefined}>
+      {trustMarks.map((mark) => (
+        <span key={mark}>
+          {mark}
+          <i aria-hidden="true" />
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export default function Home() {
   return (
-    <main>
+    <main className="landing-page">
       <section className="hero shell hero--interactive">
         <InteractiveBackdrop />
         <div className="hero__copy reveal">
@@ -43,10 +64,11 @@ export default function Home() {
         <LifecyclePreview />
       </section>
 
-      <section className="trust-strip">
-        <span>Immutable Terms Hash</span>
-        <i /> <span>Zero Human Middlemen</span>
-        <i /> <span>Verifiable Settlement Receipts</span>
+      <section className="trust-strip" aria-label="AmanPay escrow guarantees">
+        <div className="trust-strip__track">
+          <TrustMarks />
+          <TrustMarks hidden />
+        </div>
       </section>
 
       {/* Real-world Problem & Use Cases */}
@@ -58,41 +80,41 @@ export default function Home() {
             <br />
             AmanPay smart contracts enforce pure math.
           </h2>
-          <p className="max-w-2xl text-sm text-[#667068] mt-2">
+          <p className="section-heading__lede">
             Millions trade digital assets in unmoderated Facebook Groups and chat apps every day. Traditional manual middlemen hold your money in personal bank accounts, impersonate trusted admins, or vanish with funds.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
-          <div className="landing-card landing-card--danger bg-white/60 border border-[#d8d2c3] p-6 rounded-xl">
-            <div className="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center mb-4">
+        <div className="landing-card-grid">
+          <article className="landing-card landing-card--danger">
+            <div className="landing-card__icon landing-card__icon--danger">
               <ShieldAlert size={20} />
             </div>
-            <h3 className="font-bold text-base text-[#17231e] mb-1">Human Middleman Risks</h3>
-            <p className="text-xs text-[#667068] leading-relaxed">
+            <h3>Human Middleman Risks</h3>
+            <p>
               Fake admin clones, slow manual transfers, and exit scams. If the middleman gets compromised, both parties lose everything.
             </p>
-          </div>
+          </article>
 
-          <div className="landing-card bg-white/60 border border-[#d8d2c3] p-6 rounded-xl">
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4">
+          <article className="landing-card">
+            <div className="landing-card__icon landing-card__icon--green">
               <Gamepad2 size={20} />
             </div>
-            <h3 className="font-bold text-base text-[#17231e] mb-1">Game Accounts & Currency</h3>
-            <p className="text-xs text-[#667068] leading-relaxed">
+            <h3>Game Accounts & Currency</h3>
+            <p>
               Trading high-tier accounts (MLBB, Steam, Valorant) or in-game items? Lock buyer funds until credentials and full email access are transferred.
             </p>
-          </div>
+          </article>
 
-          <div className="landing-card bg-white/60 border border-[#d8d2c3] p-6 rounded-xl">
-            <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
+          <article className="landing-card">
+            <div className="landing-card__icon landing-card__icon--amber">
               <KeyRound size={20} />
             </div>
-            <h3 className="font-bold text-base text-[#17231e] mb-1">Subscriptions, Keys & Freelance</h3>
-            <p className="text-xs text-[#667068] leading-relaxed">
+            <h3>Subscriptions, Keys & Freelance</h3>
+            <p>
               Trading premium software access, Notion templates, source code, or design commissions. Automated review windows and milestone deliveries.
             </p>
-          </div>
+          </article>
         </div>
       </section>
 
@@ -133,11 +155,44 @@ export default function Home() {
         <div className="section-heading">
           <p className="eyebrow">Security by default</p>
           <h2>Rules replace trust.</h2>
-          <p className="max-w-2xl text-sm text-[#667068] mt-3">
+          <p className="section-heading__lede">
             AmanPay never takes custody of funds. Deal terms are hashed, escrow state is enforced on-chain, and completed transactions produce public receipts.
           </p>
         </div>
       </section>
+
+      <section className="landing-cta shell" aria-labelledby="closing-cta-heading">
+        <div className="cta-band">
+          <div>
+            <p className="eyebrow">Start with verifiable terms</p>
+            <h2 id="closing-cta-heading">Make next deal clear before money moves.</h2>
+            <p>Draft terms first. Connect your wallet only when ready to create an on-chain escrow.</p>
+          </div>
+          <div className="landing-cta__actions">
+            <Link className="button button--paper" href="/deals/new">
+              Create Secure Deal <ArrowRight size={18} />
+            </Link>
+            <Link className="landing-cta__proof" href="/proof">
+              See Product Proof
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="landing-footer shell">
+        <div className="landing-footer__brand">
+          <strong>AmanPay</strong>
+          <p>Non-custodial escrow rules on Stellar Soroban Testnet.</p>
+        </div>
+        <nav aria-label="Footer navigation">
+          <a href="#how-it-works">How It Works</a>
+          <a href="#use-cases">Use Cases</a>
+          <a href="#security">Security</a>
+          <Link href="/proof">Proof</Link>
+          <Link href="/dashboard">Dashboard</Link>
+          <Link href="/deals/new">Create Deal</Link>
+        </nav>
+      </footer>
     </main>
   );
 }
