@@ -53,6 +53,16 @@ Native XLM wallet payments use `Asset.native()` directly between accounts. This 
 - `/profiles/[address]` displays recorded public Testnet settlement history.
 - [StellarExpert Testnet](https://stellar.expert/explorer/testnet) independently verifies submitted transaction hashes.
 
+## Technical Boundaries
+
+| Layer | Responsibility | Trust Boundary |
+| --- | --- | --- |
+| Freighter wallet | Account selection and transaction signatures | User controls private key; AmanPay never receives it. |
+| Stellar Soroban | Escrow state, asset custody, and settlement rules | On-chain, Testnet contract execution. |
+| Horizon and Soroban RPC | Account balance and contract-state reads | Public Stellar Testnet infrastructure. |
+| Supabase | Deal metadata, timeline indexing, and role-gated private records | Off-chain product data; never source of escrow custody. |
+| Gemini parser | Optional structured extraction from chat text or screenshots | Draft terms only; users review terms before signing. |
+
 ---
 
 ## Executive Summary
@@ -118,29 +128,19 @@ However, traditional informal trade suffers from critical pain points:
 
 ```text
 .
-├── contract/amanpay-escrow/     # Soroban Rust smart contract
-│   ├── src/
-│   │   ├── lib.rs              # Contract entrypoints, settlement & fee logic
-│   │   ├── types.rs            # Deal structs, DealStatus, DealType enums
-│   │   ├── storage.rs          # Storage keys & persistent TTL extensions
-│   │   ├── events.rs           # Soroban contract events
-│   │   ├── error.rs            # Custom typed contract error codes
-│   │   └── test.rs             # 20 exhaustive unit & invariant tests
-│   └── Cargo.toml
-├── fe/                         # Next.js App Router frontend
-│   ├── src/
-│   │   ├── app/                # Pages & Route Handlers (API)
-│   │   ├── components/         # Global header, layout wrappers
-│   │   ├── config/             # Stellar testnet contract & asset configuration
-│   │   ├── features/           # Feature slices (deals, wallet, dashboard)
-│   │   │   ├── deals/          # Deal models, components, parser, & timeline
-│   │   │   └── wallet/         # Freighter & dual-role simulator provider
-│   │   └── lib/                # Stellar SDK encoders, decoders, & Supabase client
-│   └── vitest.config.ts        # Unit test configuration
-├── supabase/migrations/        # Database schema for off-chain metadata & timeline
-├── ARCHITECTURE.md             # Complete architecture specification
-├── PRD.md                      # Product requirement document
-└── scripts/testnet-smoke.sh    # Stellar CLI testnet smoke test script
+├── assets/amanpay-icon.png     # Repository identity asset
+├── contract/amanpay-escrow/    # Soroban Rust escrow contract and tests
+├── fe/
+│   ├── public/icon.png         # Web application icon
+│   ├── src/app/                # App Router: dashboard, deals, proof, profiles, APIs
+│   ├── src/features/deals/     # Terms, parser, lifecycle, receipts, delivery timeline
+│   ├── src/features/wallet/    # Freighter connection and wallet session
+│   ├── src/lib/stellar/        # SDK codecs, contract reads, balance, native payment
+│   └── vitest.config.ts        # Frontend test configuration
+├── supabase/migrations/        # Public metadata and private-role data schema
+├── ARCHITECTURE.md             # Architecture specification
+├── PRD.md                      # Product requirements
+└── scripts/testnet-smoke.sh    # Stellar CLI Testnet smoke test
 ```
 
 ---
@@ -199,5 +199,10 @@ This applies `supabase/migrations/202606210001_create_deals.sql` and `supabase/m
 
 ---
 
+## Prototype Status
+
+Hackathon prototype running on Stellar Testnet. Smart contracts have not received independent security audit. Do not use with mainnet funds.
+
 ## License
-MIT License. Developed for the Stellar Soroban Ecosystem.
+
+MIT License. Developed for Stellar Soroban ecosystem.
