@@ -1,9 +1,21 @@
-# AmanPay
+<p align="center">
+  <img src="./assets/amanpay-icon.png" alt="AmanPay Logo" width="120" />
+</p>
 
-**Deal OS & programmable non-custodial escrow for informal digital commerce on Stellar Soroban.**  
-Turn chat-based digital deals into structured terms and on-chain escrow workflows.
+<h1 align="center">AmanPay</h1>
 
-[**Live App**](https://amanpay-fi.vercel.app) · [**Product Proof**](https://amanpay-fi.vercel.app/proof) · [**Stellar Testnet Contract**](https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52) · [**Architecture**](./ARCHITECTURE.md) · [**PRD**](./PRD.md)
+<p align="center">
+  <strong>Deal OS & programmable non-custodial escrow for informal digital commerce on Stellar Soroban.</strong><br>
+  Turn chat-based digital deals into structured terms and on-chain escrow workflows.
+</p>
+
+<p align="center">
+  <a href="https://amanpay-fi.vercel.app"><strong>Live App</strong></a> ·
+  <a href="https://amanpay-fi.vercel.app/proof"><strong>Product Proof</strong></a> ·
+  <a href="https://stellar.expert/explorer/testnet/contract/CDY2ANSND433R2QPOZXUNFXEZU5H5KGJHEFR5EVQL5PST2XJINYZPO52"><strong>Stellar Testnet Contract</strong></a> ·
+  <a href="./ARCHITECTURE.md"><strong>Architecture</strong></a> ·
+  <a href="./PRD.md"><strong>PRD</strong></a>
+</p>
 
 ---
 
